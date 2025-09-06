@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import swaggerUi from 'swagger-ui-express';
 import { connectDB } from './config/database';
 import { specs } from './config/swagger';
+import pokemonRoutes from './routes/pokemonRoutes';
 
 // Configuração do ambiente
 dotenv.config();
@@ -42,12 +43,15 @@ app.get('/', (req, res) => {
   res.json({ message: 'Hello World!' });
 });
 
+// Rotas da API
+app.use('/api/pokemons', pokemonRoutes);
+
 // Iniciar servidor
 const startServer = async (expressApp = app, port = PORT) => {
   try {
     // Conectar ao MongoDB
     await connectDB();
-    
+
     expressApp.listen(port, () => {
       console.log(`Servidor rodando na porta ${port}`);
       console.log(`Documentação Swagger disponível em http://localhost:${port}/api-docs`);
