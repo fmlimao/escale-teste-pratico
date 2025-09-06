@@ -10,6 +10,7 @@ dotenv.config();
 
 // Inicialização do app
 const app = express();
+/* istanbul ignore next */
 const PORT = process.env.PORT || 3000;
 
 // Middleware
@@ -42,14 +43,14 @@ app.get('/', (req, res) => {
 });
 
 // Iniciar servidor
-const startServer = async () => {
+const startServer = async (expressApp = app, port = PORT) => {
   try {
     // Conectar ao MongoDB
     await connectDB();
     
-    app.listen(PORT, () => {
-      console.log(`Servidor rodando na porta ${PORT}`);
-      console.log(`Documentação Swagger disponível em http://localhost:${PORT}/api-docs`);
+    expressApp.listen(port, () => {
+      console.log(`Servidor rodando na porta ${port}`);
+      console.log(`Documentação Swagger disponível em http://localhost:${port}/api-docs`);
     });
   } catch (error) {
     console.error('Erro ao iniciar o servidor:', error);
@@ -57,7 +58,26 @@ const startServer = async () => {
   }
 };
 
-startServer();
+// Função auxiliar para iniciar o servidor (para facilitar os testes)
+export const initServer = () => {
+  // Iniciar o servidor apenas se não estiver em ambiente de teste
+  const shouldStartServer = process.env.NODE_ENV !== 'test';
+  /* istanbul ignore next */
+  if (shouldStartServer) {
+    startServer();
+  }
+  return shouldStartServer;
+};
+
+// Inicializa o servidor
+/* istanbul ignore next */
+initServer();
 
 // Para testes
-export default app;
+export default Object.assign(app, {
+  __test__: {
+    startServer,
+    initServer,
+    PORT
+  }
+});
