@@ -1,7 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import swaggerUi from 'swagger-ui-express';
 import { connectDB } from './config/database';
+import { specs } from './config/swagger';
 
 // Configuração do ambiente
 dotenv.config();
@@ -14,7 +16,27 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Rotas
+// Configuração do Swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+
+/**
+ * @swagger
+ * /:
+ *   get:
+ *     summary: Retorna uma mensagem de Hello World
+ *     description: Rota inicial para verificar se a API está funcionando
+ *     responses:
+ *       200:
+ *         description: Mensagem de sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Hello World!
+ */
 app.get('/', (req, res) => {
   res.json({ message: 'Hello World!' });
 });
@@ -27,6 +49,7 @@ const startServer = async () => {
     
     app.listen(PORT, () => {
       console.log(`Servidor rodando na porta ${PORT}`);
+      console.log(`Documentação Swagger disponível em http://localhost:${PORT}/api-docs`);
     });
   } catch (error) {
     console.error('Erro ao iniciar o servidor:', error);
