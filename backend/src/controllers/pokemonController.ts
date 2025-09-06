@@ -18,19 +18,20 @@ export class PokemonController {
    */
   async create(req: Request, res: Response): Promise<void> {
     try {
-      // Valida o corpo da requisição
+      // Valida o corpo da
+      // requisição
       const { name } = req.body;
-      
+
       if (!name || typeof name !== 'string') {
-        res.status(400).json({ error: 'Nome do Pokémon é obrigatório' });
+        res.status(400).json({ error: 'Nome ou ID do Pokémon é obrigatório' });
         return;
       }
 
       // Cria o Pokémon
       const pokemon = await this.pokemonService.createPokemon(name);
-      
+
       res.status(201).json({
-        message: `Pokémon ${name} cadastrado com sucesso`,
+        message: `Pokémon ${pokemon.name} cadastrado com sucesso`,
         pokemon: {
           id: pokemon._id,
           name: pokemon.name,
@@ -38,6 +39,8 @@ export class PokemonController {
           // para não sobrecarregar a resposta
           types: pokemon.data.types,
           sprites: pokemon.data.sprites,
+          abilities: pokemon.data.abilities,
+          stats: pokemon.data.stats,
           createdAt: pokemon.createdAt
         }
       });
@@ -48,13 +51,13 @@ export class PokemonController {
           res.status(409).json({ error: error.message });
           return;
         }
-        
+
         if (error.message.includes('não encontrado')) {
           res.status(404).json({ error: error.message });
           return;
         }
       }
-      
+
       // Erro genérico
       console.error('Erro ao criar Pokémon:', error);
       res.status(500).json({ error: 'Erro interno do servidor' });

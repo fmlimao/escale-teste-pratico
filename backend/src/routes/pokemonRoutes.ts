@@ -9,7 +9,7 @@ const pokemonController = new PokemonController();
  * /api/pokemons:
  *   post:
  *     summary: Cadastra um novo Pokémon
- *     description: Busca um Pokémon pelo nome na PokeAPI e salva no banco de dados
+ *     description: Busca um Pokémon pelo nome ou ID na PokeAPI e salva no banco de dados
  *     tags:
  *       - Pokémons
  *     requestBody:
@@ -23,7 +23,7 @@ const pokemonController = new PokemonController();
  *             properties:
  *               name:
  *                 type: string
- *                 description: Nome do Pokémon a ser cadastrado
+ *                 description: Nome ou ID do Pokémon a ser cadastrado
  *                 example: pikachu
  *     responses:
  *       201:
@@ -63,7 +63,7 @@ const pokemonController = new PokemonController();
  *               properties:
  *                 error:
  *                   type: string
- *                   example: Nome do Pokémon é obrigatório
+ *                   example: Nome ou ID do Pokémon é obrigatório
  *       404:
  *         description: Pokémon não encontrado na PokeAPI
  *         content:

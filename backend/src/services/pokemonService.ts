@@ -38,23 +38,26 @@ export class PokemonService {
 
   /**
    * Cria um novo Pokémon no banco de dados
-   * @param name Nome do Pokémon a ser criado
+   * @param nameOrId Nome ou ID do Pokémon a ser criado
    * @returns O Pokémon criado
    * @throws Error se o Pokémon já existir ou não for encontrado na API
    */
-  async createPokemon(name: string): Promise<IPokemon> {
-    // Verifica se o Pokémon já existe
-    const exists = await this.pokemonExists(name);
+  async createPokemon(nameOrId: string): Promise<IPokemon> {
+    // Busca o Pokémon na API primeiro para obter o nome correto
+    const pokemonData = await this.fetchPokemonFromAPI(nameOrId);
+
+    // Pega o nome real do Pokémon da resposta da API
+    const realPokemonName = pokemonData.name.toLowerCase();
+
+    // Verifica se o Pokémon já existe usando o nome real
+    const exists = await this.pokemonExists(realPokemonName);
     if (exists) {
-      throw new Error(`Pokémon ${name} já está cadastrado`);
+      throw new Error(`Pokémon ${realPokemonName} já está cadastrado`);
     }
 
-    // Busca o Pokémon na API
-    const pokemonData = await this.fetchPokemonFromAPI(name);
-
-    // Cria o Pokémon no banco de dados
+    // Cria o Pokémon no banco de dados com o nome real
     const pokemon = new Pokemon({
-      name: name.toLowerCase(),
+      name: realPokemonName,
       data: pokemonData,
     });
 
