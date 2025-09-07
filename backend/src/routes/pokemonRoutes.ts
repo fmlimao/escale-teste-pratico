@@ -256,6 +256,136 @@ router.get('/', (req, res, next) => pokemonController.findAll(req, res, next));
 /* istanbul ignore next */
 router.get('/:id', (req, res, next) => pokemonController.findById(req, res, next));
 
+/**
+ * @swagger
+ * /api/pokemons/{id}:
+ *   put:
+ *     summary: Atualiza um Pokémon pelo ID
+ *     tags: [Pokemons]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID do Pokémon a ser atualizado
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Nome ou ID do novo Pokémon
+ *     responses:
+ *       200:
+ *         description: Pokémon atualizado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Pokémon atualizado com sucesso para pikachu
+ *                 pokemon:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: 60d21b4667d0d8992e610c85
+ *                     name:
+ *                       type: string
+ *                       example: pikachu
+ *                     types:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                     sprites:
+ *                       type: object
+ *                     abilities:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                     stats:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *       400:
+ *         description: ID inválido ou nome não fornecido
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: object
+ *                   properties:
+ *                     code:
+ *                       type: integer
+ *                       example: 400
+ *                     message:
+ *                       type: string
+ *                       example: Nome ou ID do novo Pokémon é obrigatório
+ *       404:
+ *         description: Pokémon não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: object
+ *                   properties:
+ *                     code:
+ *                       type: integer
+ *                       example: 404
+ *                     message:
+ *                       type: string
+ *                       example: Pokémon com ID 60d21b4667d0d8992e610c85 não encontrado
+ *       409:
+ *         description: Pokémon já cadastrado com outro ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: object
+ *                   properties:
+ *                     code:
+ *                       type: integer
+ *                       example: 409
+ *                     message:
+ *                       type: string
+ *                       example: Pokémon pikachu já está cadastrado com outro ID
+ *       500:
+ *         description: Erro interno do servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: object
+ *                   properties:
+ *                     code:
+ *                       type: integer
+ *                       example: 500
+ *                     message:
+ *                       type: string
+ *                       example: Erro ao atualizar Pokémon
+ */
+/* istanbul ignore next */
+router.put('/:id', (req, res, next) => pokemonController.update(req, res, next));
+
 /* istanbul ignore next */
 router.post('/', (req, res, next) => pokemonController.create(req, res, next));
 

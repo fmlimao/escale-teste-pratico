@@ -77,6 +77,49 @@ export class PokemonController {
   }
 
   /**
+   * Atualiza um Pokémon pelo ID
+   * @param req Requisição Express
+   * @param res Resposta Express
+   * @param next Função para passar para o próximo middleware
+   */
+  async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+      const { name } = req.body;
+
+      if (!id) {
+        next(createError('ID do Pokémon é obrigatório', 400));
+        return;
+      }
+
+      if (!name || typeof name !== 'string') {
+        next(createError('Nome ou ID do novo Pokémon é obrigatório', 400));
+        return;
+      }
+
+      const updatedPokemon = await this.pokemonService.updatePokemon(id, name);
+
+      // Formata o Pokémon para retornar apenas os campos necessários
+      const formattedPokemon = {
+        id: updatedPokemon._id,
+        name: updatedPokemon.name,
+        types: updatedPokemon.data.types,
+        sprites: updatedPokemon.data.sprites,
+        abilities: updatedPokemon.data.abilities,
+        stats: updatedPokemon.data.stats,
+        updatedAt: updatedPokemon.updatedAt
+      };
+
+      res.status(200).json({
+        message: `Pokémon atualizado com sucesso para ${updatedPokemon.name}`,
+        pokemon: formattedPokemon
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
    * Cria um novo Pokémon
    * @param req Requisição Express
    * @param res Resposta Express

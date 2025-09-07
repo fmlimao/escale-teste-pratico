@@ -74,6 +74,45 @@ export class PokemonService {
       throw createError('Erro ao buscar Pokémon', 500);
     }
   }
+  
+  /* istanbul ignore next */
+  async updatePokemon(id: string, nameOrId: string): Promise<IPokemon> {
+    try {
+      // Verificar se o Pokémon a ser atualizado existe
+      const existingPokemon = await this.findPokemonById(id);
+      
+      // Buscar os novos dados do Pokémon na API
+      const pokemonData = await this.fetchPokemonFromAPI(nameOrId);
+      
+      // Pega o nome real do Pokémon da resposta da API
+      const realPokemonName = pokemonData.name.toLowerCase();
+      
+      // Verificar se o novo Pokémon já existe no banco (exceto o próprio que está sendo editado)
+      const duplicatePokemon = await Pokemon.findOne({ 
+        name: realPokemonName,
+        _id: { $ne: id } // Excluir o próprio Pokémon da verificação
+      });
+      
+      if (duplicatePokemon) {
+        throw createError(`Pokémon ${realPokemonName} já está cadastrado com outro ID`, 409);
+      }
+      
+      // Atualizar o Pokémon com os novos dados
+      existingPokemon.name = realPokemonName;
+      existingPokemon.data = pokemonData;
+      
+      await existingPokemon.save();
+      return existingPokemon;
+    } catch (error) {
+      // Se o erro já tiver um código de status, propaga-o
+      if ((error as any).statusCode) {
+        throw error;
+      }
+      
+      console.error('Erro ao atualizar Pokémon:', error);
+      throw createError('Erro ao atualizar Pokémon', 500);
+    }
+  }
 
   /**
    * Cria um novo Pokémon no banco de dados
