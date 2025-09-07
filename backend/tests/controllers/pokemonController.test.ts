@@ -23,7 +23,10 @@ describe('PokemonController', () => {
       createPokemon: jest.fn(),
       fetchPokemonFromAPI: jest.fn(),
       pokemonExists: jest.fn(),
-      findAllPokemons: jest.fn()
+      findAllPokemons: jest.fn(),
+      findPokemonById: jest.fn(),
+      updatePokemon: jest.fn(),
+      deletePokemon: jest.fn()
     } as unknown as jest.Mocked<PokemonService>;
     
     // Substitui o construtor do PokemonService para retornar nosso mock
@@ -257,6 +260,240 @@ describe('PokemonController', () => {
       // Verifica se status e json não foram chamados
       expect(mockResponse.status).not.toHaveBeenCalled();
       expect(mockResponse.json).not.toHaveBeenCalled();
+    });
+  });
+  
+  describe('findById', () => {
+    it('deve chamar next com erro 400 quando o ID não é fornecido', async () => {
+      // Configura o mock request sem ID
+      mockRequest.params = {};
+      
+      // Chama o método findById
+      await pokemonController.findById(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      
+      // Verifica se next foi chamado com o erro correto
+      expect(mockNext).toHaveBeenCalled();
+      expect(createError).toHaveBeenCalledWith('ID do Pokémon é obrigatório', 400);
+      
+      // Verifica se o serviço não foi chamado
+      expect(mockPokemonService.findPokemonById).not.toHaveBeenCalled();
+    });
+    
+    it('deve retornar o Pokémon com sucesso quando o ID é válido', async () => {
+      // Configura o mock request com ID válido
+      mockRequest.params = { id: 'valid-id' };
+      
+      // Mock do resultado do serviço
+      const mockPokemon = {
+        _id: 'valid-id',
+        name: 'pikachu',
+        data: {
+          name: 'pikachu',
+          types: [{ slot: 1, type: { name: 'electric' } }],
+          sprites: { front_default: 'url-to-sprite' },
+          abilities: [{ ability: { name: 'static' } }],
+          stats: [{ base_stat: 35, stat: { name: 'hp' } }]
+        },
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      
+      mockPokemonService.findPokemonById.mockResolvedValueOnce(mockPokemon as any);
+      
+      // Chama o método findById
+      await pokemonController.findById(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      
+      // Verifica se o serviço foi chamado corretamente
+      expect(mockPokemonService.findPokemonById).toHaveBeenCalledWith('valid-id');
+      
+      // Verifica se status e json foram chamados corretamente
+      expect(mockResponse.status).toHaveBeenCalledWith(200);
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        id: 'valid-id',
+        name: 'pikachu',
+        types: [{ slot: 1, type: { name: 'electric' } }],
+        sprites: { front_default: 'url-to-sprite' },
+        abilities: [{ ability: { name: 'static' } }],
+        stats: [{ base_stat: 35, stat: { name: 'hp' } }],
+        createdAt: expect.any(Date)
+      });
+    });
+    
+    it('deve chamar next com o erro quando ocorre uma exceção', async () => {
+      // Configura o mock request com ID válido
+      mockRequest.params = { id: 'valid-id' };
+      
+      // Mock de erro
+      const error = new Error('Pokémon não encontrado');
+      mockPokemonService.findPokemonById.mockRejectedValueOnce(error);
+      
+      // Chama o método findById
+      await pokemonController.findById(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      
+      // Verifica se next foi chamado com o erro
+      expect(mockNext).toHaveBeenCalledWith(error);
+    });
+  });
+  
+  describe('update', () => {
+    it('deve chamar next com erro 400 quando o ID não é fornecido', async () => {
+      // Configura o mock request sem ID
+      mockRequest.params = {};
+      mockRequest.body = { name: 'pikachu' };
+      
+      // Chama o método update
+      await pokemonController.update(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      
+      // Verifica se next foi chamado com o erro correto
+      expect(mockNext).toHaveBeenCalled();
+      expect(createError).toHaveBeenCalledWith('ID do Pokémon é obrigatório', 400);
+      
+      // Verifica se o serviço não foi chamado
+      expect(mockPokemonService.updatePokemon).not.toHaveBeenCalled();
+    });
+    
+    it('deve chamar next com erro 400 quando o nome não é fornecido', async () => {
+      // Configura o mock request com ID mas sem nome
+      mockRequest.params = { id: 'valid-id' };
+      mockRequest.body = {};
+      
+      // Chama o método update
+      await pokemonController.update(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      
+      // Verifica se next foi chamado com o erro correto
+      expect(mockNext).toHaveBeenCalled();
+      expect(createError).toHaveBeenCalledWith('Nome ou ID do novo Pokémon é obrigatório', 400);
+      
+      // Verifica se o serviço não foi chamado
+      expect(mockPokemonService.updatePokemon).not.toHaveBeenCalled();
+    });
+    
+    it('deve chamar next com erro 400 quando o nome não é uma string', async () => {
+      // Configura o mock request com ID mas com nome não-string
+      mockRequest.params = { id: 'valid-id' };
+      mockRequest.body = { name: 123 };
+      
+      // Chama o método update
+      await pokemonController.update(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      
+      // Verifica se next foi chamado com o erro correto
+      expect(mockNext).toHaveBeenCalled();
+      expect(createError).toHaveBeenCalledWith('Nome ou ID do novo Pokémon é obrigatório', 400);
+      
+      // Verifica se o serviço não foi chamado
+      expect(mockPokemonService.updatePokemon).not.toHaveBeenCalled();
+    });
+    
+    it('deve atualizar o Pokémon com sucesso', async () => {
+      // Configura o mock request com ID e nome válidos
+      mockRequest.params = { id: 'valid-id' };
+      mockRequest.body = { name: 'charmander' };
+      
+      // Mock do resultado do serviço
+      const mockPokemon = {
+        _id: 'valid-id',
+        name: 'charmander',
+        data: {
+          name: 'charmander',
+          types: [{ slot: 1, type: { name: 'fire' } }],
+          sprites: { front_default: 'url-to-sprite' },
+          abilities: [{ ability: { name: 'blaze' } }],
+          stats: [{ base_stat: 39, stat: { name: 'hp' } }]
+        },
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      
+      mockPokemonService.updatePokemon.mockResolvedValueOnce(mockPokemon as any);
+      
+      // Chama o método update
+      await pokemonController.update(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      
+      // Verifica se o serviço foi chamado corretamente
+      expect(mockPokemonService.updatePokemon).toHaveBeenCalledWith('valid-id', 'charmander');
+      
+      // Verifica se status e json foram chamados corretamente
+      expect(mockResponse.status).toHaveBeenCalledWith(200);
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        message: 'Pokémon atualizado com sucesso para charmander',
+        pokemon: {
+          id: 'valid-id',
+          name: 'charmander',
+          types: [{ slot: 1, type: { name: 'fire' } }],
+          sprites: { front_default: 'url-to-sprite' },
+          abilities: [{ ability: { name: 'blaze' } }],
+          stats: [{ base_stat: 39, stat: { name: 'hp' } }],
+          updatedAt: expect.any(Date)
+        }
+      });
+    });
+    
+    it('deve chamar next com o erro quando ocorre uma exceção', async () => {
+      // Configura o mock request com ID e nome válidos
+      mockRequest.params = { id: 'valid-id' };
+      mockRequest.body = { name: 'charmander' };
+      
+      // Mock de erro
+      const error = new Error('Erro ao atualizar Pokémon');
+      mockPokemonService.updatePokemon.mockRejectedValueOnce(error);
+      
+      // Chama o método update
+      await pokemonController.update(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      
+      // Verifica se next foi chamado com o erro
+      expect(mockNext).toHaveBeenCalledWith(error);
+    });
+  });
+  
+  describe('delete', () => {
+    it('deve chamar next com erro 400 quando o ID não é fornecido', async () => {
+      // Configura o mock request sem ID
+      mockRequest.params = {};
+      
+      // Chama o método delete
+      await pokemonController.delete(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      
+      // Verifica se next foi chamado com o erro correto
+      expect(mockNext).toHaveBeenCalled();
+      expect(createError).toHaveBeenCalledWith('ID do Pokémon é obrigatório', 400);
+      
+      // Verifica se o serviço não foi chamado
+      expect(mockPokemonService.deletePokemon).not.toHaveBeenCalled();
+    });
+    
+    it('deve deletar o Pokémon com sucesso', async () => {
+      // Configura o mock request com ID válido
+      mockRequest.params = { id: 'valid-id' };
+      
+      // Mock do serviço
+      mockPokemonService.deletePokemon.mockResolvedValueOnce();
+      
+      // Chama o método delete
+      await pokemonController.delete(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      
+      // Verifica se o serviço foi chamado corretamente
+      expect(mockPokemonService.deletePokemon).toHaveBeenCalledWith('valid-id');
+      
+      // Verifica se status e json foram chamados corretamente
+      expect(mockResponse.status).toHaveBeenCalledWith(200);
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        message: `Pokémon com ID valid-id foi deletado com sucesso`
+      });
+    });
+    
+    it('deve chamar next com o erro quando ocorre uma exceção', async () => {
+      // Configura o mock request com ID válido
+      mockRequest.params = { id: 'valid-id' };
+      
+      // Mock de erro
+      const error = new Error('Erro ao deletar Pokémon');
+      mockPokemonService.deletePokemon.mockRejectedValueOnce(error);
+      
+      // Chama o método delete
+      await pokemonController.delete(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      
+      // Verifica se next foi chamado com o erro
+      expect(mockNext).toHaveBeenCalledWith(error);
     });
   });
 });

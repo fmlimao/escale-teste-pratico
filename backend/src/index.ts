@@ -28,6 +28,8 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
  *   get:
  *     summary: Retorna uma mensagem de Hello World
  *     description: Rota inicial para verificar se a API está funcionando
+ *     tags:
+ *       - Home
  *     responses:
  *       200:
  *         description: Mensagem de sucesso

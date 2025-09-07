@@ -100,7 +100,8 @@ const pokemonController = new PokemonController();
  * /api/pokemons:
  *   get:
  *     summary: Lista todos os Pokémons cadastrados
- *     tags: [Pokemons]
+ *     tags:
+ *       - Pokémons
  *     responses:
  *       200:
  *         description: Lista de Pokémons retornada com sucesso
@@ -165,7 +166,8 @@ router.get('/', (req, res, next) => pokemonController.findAll(req, res, next));
  * /api/pokemons/{id}:
  *   get:
  *     summary: Busca um Pokémon pelo ID
- *     tags: [Pokemons]
+ *     tags:
+ *       - Pokémons
  *     parameters:
  *       - in: path
  *         name: id
@@ -261,7 +263,8 @@ router.get('/:id', (req, res, next) => pokemonController.findById(req, res, next
  * /api/pokemons/{id}:
  *   put:
  *     summary: Atualiza um Pokémon pelo ID
- *     tags: [Pokemons]
+ *     tags:
+ *       - Pokémons
  *     parameters:
  *       - in: path
  *         name: id
@@ -391,7 +394,8 @@ router.put('/:id', (req, res, next) => pokemonController.update(req, res, next))
  * /api/pokemons/{id}:
  *   delete:
  *     summary: Deleta um Pokémon pelo ID
- *     tags: [Pokemons]
+ *     tags:
+ *       - Pokémons
  *     parameters:
  *       - in: path
  *         name: id
