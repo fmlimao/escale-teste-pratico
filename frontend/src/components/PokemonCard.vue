@@ -21,6 +21,11 @@ interface Props {
   }
 }
 
+// Emits
+const emit = defineEmits<{
+  (e: 'view-details', id: string): void;
+}>();
+
 const props = defineProps<Props>();
 const pokemonStore = usePokemonStore();
 
@@ -30,11 +35,15 @@ const handleDelete = async () => {
     await pokemonStore.deletePokemon(props.pokemon._id, props.pokemon.name);
   }
 };
+
+const viewDetails = () => {
+  emit('view-details', props.pokemon._id);
+};
 </script>
 
 <template>
   <li class="animating">
-    <a href="#">
+    <a href="#" @click.prevent="viewDetails">
       <img :src="pokemon.sprites.front_default" :alt="pokemon.name">
     </a>
 
