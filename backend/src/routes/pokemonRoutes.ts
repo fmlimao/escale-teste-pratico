@@ -95,6 +95,71 @@ const pokemonController = new PokemonController();
  *                   type: string
  *                   example: Erro interno do servidor
  */
+/**
+ * @swagger
+ * /api/pokemons:
+ *   get:
+ *     summary: Lista todos os Pokémons cadastrados
+ *     tags: [Pokemons]
+ *     responses:
+ *       200:
+ *         description: Lista de Pokémons retornada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   example: 2
+ *                 pokemons:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: 60d21b4667d0d8992e610c85
+ *                       name:
+ *                         type: string
+ *                         example: pikachu
+ *                       types:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                       sprites:
+ *                         type: object
+ *                       abilities:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                       stats:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *       500:
+ *         description: Erro interno do servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: object
+ *                   properties:
+ *                     code:
+ *                       type: integer
+ *                       example: 500
+ *                     message:
+ *                       type: string
+ *                       example: Erro ao buscar Pokémons
+ */
+/* istanbul ignore next */
+router.get('/', (req, res, next) => pokemonController.findAll(req, res, next));
+
 /* istanbul ignore next */
 router.post('/', (req, res, next) => pokemonController.create(req, res, next));
 

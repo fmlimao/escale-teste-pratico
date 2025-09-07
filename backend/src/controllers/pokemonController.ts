@@ -13,6 +13,36 @@ export class PokemonController {
   }
 
   /**
+   * Lista todos os Pokémons cadastrados
+   * @param req Requisição Express
+   * @param res Resposta Express
+   * @param next Função para passar para o próximo middleware
+   */
+  async findAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const pokemons = await this.pokemonService.findAllPokemons();
+
+      // Mapeia os Pokémons para retornar apenas os campos necessários
+      const formattedPokemons = pokemons.map(pokemon => ({
+        id: pokemon._id,
+        name: pokemon.name,
+        types: pokemon.data.types,
+        sprites: pokemon.data.sprites,
+        abilities: pokemon.data.abilities,
+        stats: pokemon.data.stats,
+        createdAt: pokemon.createdAt
+      }));
+
+      res.status(200).json({
+        count: pokemons.length,
+        pokemons: formattedPokemons
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
    * Cria um novo Pokémon
    * @param req Requisição Express
    * @param res Resposta Express

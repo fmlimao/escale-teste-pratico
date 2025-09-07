@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Pokemon, { IPokemon } from '../models/Pokemon';
+import { createError } from '../middlewares/errorMiddleware';
 
 // URL base da PokeAPI
 const POKE_API_URL = 'https://pokeapi.co/api/v2/pokemon';
@@ -36,6 +37,19 @@ export class PokemonService {
   async pokemonExists(name: string): Promise<boolean> {
     const pokemon = await Pokemon.findOne({ name: name.toLowerCase() });
     return !!pokemon;
+  }
+  
+  /**
+   * Busca todos os Pokémons cadastrados no banco de dados
+   * @returns Lista de Pokémons cadastrados
+   */
+  async findAllPokemons(): Promise<IPokemon[]> {
+    try {
+      return await Pokemon.find().sort({ name: 1 });
+    } catch (error) {
+      console.error('Erro ao buscar Pokémons:', error);
+      throw createError('Erro ao buscar Pokémons', 500);
+    }
   }
 
   /**
