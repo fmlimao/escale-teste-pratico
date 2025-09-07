@@ -126,6 +126,33 @@ export const usePokemonStore = defineStore('pokemon', () => {
     }, 5000);
   };
 
+  // Atualizar um pokemon
+  const updatePokemon = async (id: string, name: string) => {
+    isLoading.value = true;
+    error.value = null;
+    
+    try {
+      const response = await api.update(id, name);
+      await fetchPokemons(); // Atualiza a lista após editar
+      
+      // Define a mensagem de sucesso
+      const pokemonName = response.pokemon?.name || name;
+      showSuccessMessage(`Pokemon atualizado para ${pokemonName} com sucesso!`);
+      
+      return { success: true };
+    } catch (err) {
+      if (err instanceof Error) {
+        error.value = err.message;
+      } else {
+        error.value = 'Erro ao atualizar pokemon';
+      }
+      console.error('Erro ao atualizar pokemon:', err);
+      return { success: false, error: error.value };
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
   return {
     pokemons,
     isLoading,
@@ -134,6 +161,7 @@ export const usePokemonStore = defineStore('pokemon', () => {
     fetchPokemons,
     addPokemon,
     deletePokemon,
+    updatePokemon,
     showSuccessMessage
   };
 });

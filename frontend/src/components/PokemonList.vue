@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import { usePokemonStore } from '../stores/pokemonStore';
 import PokemonCard from './PokemonCard.vue';
 import PokemonDetailModal from './PokemonDetailModal.vue';
+import EditPokemonModal from './EditPokemonModal.vue';
 
 const pokemonStore = usePokemonStore();
 const pokemons = computed(() => pokemonStore.pokemons);
@@ -10,6 +11,10 @@ const pokemons = computed(() => pokemonStore.pokemons);
 // Estado para a modal de detalhes
 const showDetailModal = ref(false);
 const selectedPokemonId = ref('');
+
+// Estado para a modal de edição
+const showEditModal = ref(false);
+const selectedPokemon = ref(null);
 
 // Método para abrir a modal de detalhes
 const handleViewDetails = (id: string) => {
@@ -20,6 +25,35 @@ const handleViewDetails = (id: string) => {
 // Método para fechar a modal de detalhes
 const closeDetailModal = () => {
   showDetailModal.value = false;
+};
+
+// Interface para o Pokemon
+interface Pokemon {
+  _id: string;
+  id: number;
+  name: string;
+  types: Array<{
+    slot: number;
+    type: {
+      name: string;
+      url: string;
+    }
+  }>;
+  sprites: {
+    front_default: string;
+    [key: string]: any;
+  };
+}
+
+// Método para abrir a modal de edição
+const handleEditPokemon = (pokemon: Pokemon) => {
+  selectedPokemon.value = pokemon;
+  showEditModal.value = true;
+};
+
+// Método para fechar a modal de edição
+const closeEditModal = () => {
+  showEditModal.value = false;
 };
 </script>
 
@@ -35,6 +69,7 @@ const closeDetailModal = () => {
         :key="pokemon._id" 
         :pokemon="pokemon"
         @view-details="handleViewDetails"
+        @edit-pokemon="handleEditPokemon"
       />
     </ul>
     
@@ -43,6 +78,13 @@ const closeDetailModal = () => {
       :show="showDetailModal"
       :pokemon-id="selectedPokemonId"
       @close="closeDetailModal"
+    />
+    
+    <!-- Modal de edição do Pokemon -->
+    <EditPokemonModal
+      :show="showEditModal"
+      :pokemon="selectedPokemon"
+      @close="closeEditModal"
     />
   </div>
 </template>
