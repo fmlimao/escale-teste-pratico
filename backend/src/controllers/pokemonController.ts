@@ -43,6 +43,40 @@ export class PokemonController {
   }
 
   /**
+   * Busca um Pokémon pelo ID
+   * @param req Requisição Express
+   * @param res Resposta Express
+   * @param next Função para passar para o próximo middleware
+   */
+  async findById(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        next(createError('ID do Pokémon é obrigatório', 400));
+        return;
+      }
+
+      const pokemon = await this.pokemonService.findPokemonById(id);
+
+      // Formata o Pokémon para retornar apenas os campos necessários
+      const formattedPokemon = {
+        id: pokemon._id,
+        name: pokemon.name,
+        types: pokemon.data.types,
+        sprites: pokemon.data.sprites,
+        abilities: pokemon.data.abilities,
+        stats: pokemon.data.stats,
+        createdAt: pokemon.createdAt
+      };
+
+      res.status(200).json(formattedPokemon);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
    * Cria um novo Pokémon
    * @param req Requisição Express
    * @param res Resposta Express

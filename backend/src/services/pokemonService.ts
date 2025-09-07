@@ -52,6 +52,28 @@ export class PokemonService {
       throw createError('Erro ao buscar Pokémons', 500);
     }
   }
+  
+  /* istanbul ignore next */
+  async findPokemonById(id: string): Promise<IPokemon> {
+    try {
+      const pokemon = await Pokemon.findById(id);
+      if (!pokemon) {
+        throw createError(`Pokémon com ID ${id} não encontrado`, 404);
+      }
+      return pokemon;
+    } catch (error) {
+      if ((error as any).statusCode === 404) {
+        throw error;
+      }
+      
+      if ((error as any).name === 'CastError') {
+        throw createError(`ID ${id} inválido`, 400);
+      }
+      
+      console.error('Erro ao buscar Pokémon por ID:', error);
+      throw createError('Erro ao buscar Pokémon', 500);
+    }
+  }
 
   /**
    * Cria um novo Pokémon no banco de dados
