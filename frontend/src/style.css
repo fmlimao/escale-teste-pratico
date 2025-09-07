@@ -78,7 +78,7 @@ ul {
 .pokedex-results .results li {
   display: block;
   float: left;
-  margin-bottom: 32px;
+  margin-bottom: 48px;
   padding-left: 8px;
   padding-right: 8px;
   width: calc(50% - 16px);
@@ -117,10 +117,39 @@ ul {
   font-size: 80%;
   padding-top: 2px;
 }
+.pokemon-name-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
 .pokedex-results .results li .pokemon-info h5 {
   color: #313131;
   text-transform: uppercase;
-  margin-bottom: 5px;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.delete-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.delete-button:hover {
+  opacity: 1;
+}
+
+.trash-icon {
+  font-size: 18px;
+  color: #ff0000 !important;
 }
 .pokedex-results .results li .pokemon-info .abilities span {
   border-radius: 3px;
