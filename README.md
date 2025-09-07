@@ -134,8 +134,8 @@ A documentação completa da API está disponível em: http://localhost:3000/api
 - **POST /api/pokemons** - Cadastrar um Pokémon
   - Body: `{ "name": "pikachu" }`
 
-- **GET /api/pokemons** - Listar todos os Pokémon
-  - Response: Lista de Pokémon com seus dados
+- **GET /api/pokemons** - Listar todos os Pokémon (ordenados por ID)
+  - Response: Lista de Pokémon com seus dados, ordenados pelo ID numérico do Pokémon
 
 - **GET /api/pokemons/:id** - Visualizar detalhes de um Pokémon
   - Response: Dados completos do Pokémon
@@ -152,7 +152,7 @@ A documentação completa da API está disponível em: http://localhost:3000/api
 
 1. **CRUD completo de Pokémon**:
    - Criação: Busca dados na PokeAPI e salva no MongoDB
-   - Leitura: Lista todos os Pokémon ou busca por ID
+   - Leitura: Lista todos os Pokémon (ordenados por ID) ou busca por ID
    - Atualização: Edita um Pokémon existente
    - Exclusão: Remove um Pokémon do banco de dados
 

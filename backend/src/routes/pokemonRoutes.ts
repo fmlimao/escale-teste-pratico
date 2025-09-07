@@ -102,7 +102,7 @@ const pokemonController = new PokemonController();
  * @swagger
  * /api/pokemons:
  *   get:
- *     summary: Lista todos os Pokémons cadastrados
+ *     summary: Lista todos os Pokémons cadastrados (ordenados por ID)
  *     tags:
  *       - Pokémons
  *     responses:
