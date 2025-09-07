@@ -46,7 +46,26 @@ export class PokemonService {
   /* istanbul ignore next */
   async findAllPokemons(): Promise<IPokemon[]> {
     try {
-      return await Pokemon.find().sort({ name: 1 });
+      // Busca todos os pokemons e os ordena diretamente no MongoDB pelo campo id dentro de data
+      // Usamos a agregação do MongoDB para ordenar pelo campo data.id
+      const pokemons = await Pokemon.aggregate([
+        {
+          $addFields: {
+            // Convertemos o campo data.id para número para garantir ordenação numérica correta
+            numericId: { $toInt: "$data.id" }
+          }
+        },
+        {
+          $sort: { numericId: 1 } // Ordenação ascendente pelo ID numérico
+        }
+      ]);
+      
+      // Convertemos o resultado da agregação de volta para documentos do Mongoose
+      return pokemons.map(pokemon => {
+        // Removemos o campo temporário numericId
+        delete pokemon.numericId;
+        return pokemon;
+      });
     } catch (error) {
       console.error('Erro ao buscar Pokémons:', error);
       throw createError('Erro ao buscar Pokémons', 500);
