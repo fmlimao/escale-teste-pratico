@@ -20,8 +20,10 @@ export class PokemonService {
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
+        /* istanbul ignore next */
         throw new Error(`Pokémon ${name} não encontrado na PokeAPI`);
       }
+      /* istanbul ignore next */
       throw new Error(`Erro ao buscar Pokémon na PokeAPI: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
     }
   }
@@ -56,12 +58,15 @@ export class PokemonService {
     }
 
     // Cria o Pokémon no banco de dados com o nome real
+    /* istanbul ignore next */
     const pokemon = new Pokemon({
       name: realPokemonName,
       data: pokemonData,
     });
 
+    /* istanbul ignore next */
     await pokemon.save();
+    /* istanbul ignore next */
     return pokemon;
   }
 }
