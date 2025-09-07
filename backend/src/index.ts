@@ -5,6 +5,7 @@ import swaggerUi from 'swagger-ui-express';
 import { connectDB } from './config/database';
 import { specs } from './config/swagger';
 import pokemonRoutes from './routes/pokemonRoutes';
+import { notFoundMiddleware, errorMiddleware } from './middlewares/errorMiddleware';
 
 // Configuração do ambiente
 dotenv.config();
@@ -45,6 +46,14 @@ app.get('/', (req, res) => {
 
 // Rotas da API
 app.use('/api/pokemons', pokemonRoutes);
+
+// Middleware para rotas não encontradas (404)
+// Deve ser adicionado após todas as rotas
+app.use(notFoundMiddleware);
+
+// Middleware para tratamento de erros
+// Deve ser o último middleware a ser adicionado
+app.use(errorMiddleware);
 
 // Iniciar servidor
 const startServer = async (expressApp = app, port = PORT) => {

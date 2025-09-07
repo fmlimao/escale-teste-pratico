@@ -96,6 +96,6 @@ const pokemonController = new PokemonController();
  *                   example: Erro interno do servidor
  */
 /* istanbul ignore next */
-router.post('/', (req, res) => pokemonController.create(req, res));
+router.post('/', (req, res, next) => pokemonController.create(req, res, next));
 
 export default router;

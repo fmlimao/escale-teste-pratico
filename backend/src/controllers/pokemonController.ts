@@ -1,5 +1,6 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { PokemonService } from '../services/pokemonService';
+import { createError } from '../middlewares/errorMiddleware';
 
 /**
  * Controller para gerenciar as requisições relacionadas a Pokémons
@@ -15,15 +16,16 @@ export class PokemonController {
    * Cria um novo Pokémon
    * @param req Requisição Express
    * @param res Resposta Express
+   * @param next Função para passar para o próximo middleware
    */
-  async create(req: Request, res: Response): Promise<void> {
+  async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       // Valida o corpo da
       // requisição
       const { name } = req.body;
 
       if (!name || typeof name !== 'string') {
-        res.status(400).json({ error: 'Nome ou ID do Pokémon é obrigatório' });
+        next(createError('Nome ou ID do Pokémon é obrigatório', 400));
         return;
       }
 
@@ -48,19 +50,19 @@ export class PokemonController {
       // Tratamento de erros específicos
       if (error instanceof Error) {
         if (error.message.includes('já está cadastrado')) {
-          res.status(409).json({ error: error.message });
+          next(createError(error.message, 409));
           return;
         }
 
         if (error.message.includes('não encontrado')) {
-          res.status(404).json({ error: error.message });
+          next(createError(error.message, 404));
           return;
         }
       }
 
       // Erro genérico
       console.error('Erro ao criar Pokémon:', error);
-      res.status(500).json({ error: 'Erro interno do servidor' });
+      next(createError('Erro interno do servidor', 500));
     }
   }
 }
