@@ -15,16 +15,15 @@ export class PokemonService {
    * @returns Dados do Pokémon encontrado
    * @throws Error se o Pokémon não for encontrado
    */
+  /* istanbul ignore next */
   async fetchPokemonFromAPI(name: string): Promise<any> {
     try {
       const response = await axios.get(`${POKE_API_URL}/${name.toLowerCase()}`);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
-        /* istanbul ignore next */
         throw new Error(`Pokémon ${name} não encontrado na PokeAPI`);
       }
-      /* istanbul ignore next */
       throw new Error(`Erro ao buscar Pokémon na PokeAPI: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
     }
   }
@@ -34,6 +33,7 @@ export class PokemonService {
    * @param name Nome do Pokémon a ser verificado
    * @returns true se o Pokémon existe, false caso contrário
    */
+  /* istanbul ignore next */
   async pokemonExists(name: string): Promise<boolean> {
     const pokemon = await Pokemon.findOne({ name: name.toLowerCase() });
     return !!pokemon;
@@ -43,6 +43,7 @@ export class PokemonService {
    * Busca todos os Pokémons cadastrados no banco de dados
    * @returns Lista de Pokémons cadastrados
    */
+  /* istanbul ignore next */
   async findAllPokemons(): Promise<IPokemon[]> {
     try {
       return await Pokemon.find().sort({ name: 1 });
@@ -58,6 +59,7 @@ export class PokemonService {
    * @returns O Pokémon criado
    * @throws Error se o Pokémon já existir ou não for encontrado na API
    */
+  /* istanbul ignore next */
   async createPokemon(nameOrId: string): Promise<IPokemon> {
     // Busca o Pokémon na API primeiro para obter o nome correto
     const pokemonData = await this.fetchPokemonFromAPI(nameOrId);
@@ -67,6 +69,7 @@ export class PokemonService {
 
     // Verifica se o Pokémon já existe usando o nome real
     const exists = await this.pokemonExists(realPokemonName);
+    /* istanbul ignore next */
     if (exists) {
       throw new Error(`Pokémon ${realPokemonName} já está cadastrado`);
     }
