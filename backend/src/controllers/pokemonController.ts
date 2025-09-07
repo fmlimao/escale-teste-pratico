@@ -120,6 +120,31 @@ export class PokemonController {
   }
 
   /**
+   * Deleta um Pokémon pelo ID
+   * @param req Requisição Express
+   * @param res Resposta Express
+   * @param next Função para passar para o próximo middleware
+   */
+  async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        next(createError('ID do Pokémon é obrigatório', 400));
+        return;
+      }
+
+      await this.pokemonService.deletePokemon(id);
+
+      res.status(200).json({
+        message: `Pokémon com ID ${id} foi deletado com sucesso`
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
    * Cria um novo Pokémon
    * @param req Requisição Express
    * @param res Resposta Express

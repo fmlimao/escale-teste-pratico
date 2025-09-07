@@ -386,6 +386,82 @@ router.get('/:id', (req, res, next) => pokemonController.findById(req, res, next
 /* istanbul ignore next */
 router.put('/:id', (req, res, next) => pokemonController.update(req, res, next));
 
+/**
+ * @swagger
+ * /api/pokemons/{id}:
+ *   delete:
+ *     summary: Deleta um Pokémon pelo ID
+ *     tags: [Pokemons]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID do Pokémon a ser deletado
+ *     responses:
+ *       200:
+ *         description: Pokémon deletado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Pokémon com ID 60d21b4667d0d8992e610c85 foi deletado com sucesso
+ *       400:
+ *         description: ID inválido
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: object
+ *                   properties:
+ *                     code:
+ *                       type: integer
+ *                       example: 400
+ *                     message:
+ *                       type: string
+ *                       example: ID 123 inválido
+ *       404:
+ *         description: Pokémon não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: object
+ *                   properties:
+ *                     code:
+ *                       type: integer
+ *                       example: 404
+ *                     message:
+ *                       type: string
+ *                       example: Pokémon com ID 60d21b4667d0d8992e610c85 não encontrado
+ *       500:
+ *         description: Erro interno do servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: object
+ *                   properties:
+ *                     code:
+ *                       type: integer
+ *                       example: 500
+ *                     message:
+ *                       type: string
+ *                       example: Erro ao deletar Pokémon
+ */
+/* istanbul ignore next */
+router.delete('/:id', (req, res, next) => pokemonController.delete(req, res, next));
+
 /* istanbul ignore next */
 router.post('/', (req, res, next) => pokemonController.create(req, res, next));
 

@@ -113,6 +113,35 @@ export class PokemonService {
       throw createError('Erro ao atualizar Pokémon', 500);
     }
   }
+  
+  /* istanbul ignore next */
+  async deletePokemon(id: string): Promise<void> {
+    try {
+      // Verificar se o Pokémon existe antes de tentar deletar
+      await this.findPokemonById(id);
+      
+      // Deletar o Pokémon
+      const result = await Pokemon.deleteOne({ _id: id });
+      
+      // Verificar se a exclusão foi bem-sucedida
+      if (result.deletedCount === 0) {
+        throw createError(`Não foi possível deletar o Pokémon com ID ${id}`, 500);
+      }
+    } catch (error) {
+      // Se o erro já tiver um código de status, propaga-o
+      if ((error as any).statusCode) {
+        throw error;
+      }
+      
+      // Se for um erro de ID inválido (CastError), propaga como Bad Request
+      if ((error as any).name === 'CastError') {
+        throw createError(`ID ${id} inválido`, 400);
+      }
+      
+      console.error('Erro ao deletar Pokémon:', error);
+      throw createError('Erro ao deletar Pokémon', 500);
+    }
+  }
 
   /**
    * Cria um novo Pokémon no banco de dados
