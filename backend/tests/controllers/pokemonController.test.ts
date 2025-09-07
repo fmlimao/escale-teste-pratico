@@ -96,6 +96,7 @@ describe('PokemonController', () => {
         _id: 'mock-id',
         name: 'pikachu',
         data: {
+          id: 25,
           name: 'pikachu',
           types: [{ slot: 1, type: { name: 'electric' } }],
           sprites: { front_default: 'url-to-sprite' },
@@ -119,7 +120,8 @@ describe('PokemonController', () => {
       expect(mockResponse.json).toHaveBeenCalledWith({
         message: `Pokémon pikachu cadastrado com sucesso`,
         pokemon: {
-          id: 'mock-id',
+          _id: 'mock-id',
+          id: 25,
           name: 'pikachu',
           types: [{ slot: 1, type: { name: 'electric' } }],
           sprites: { front_default: 'url-to-sprite' },
@@ -197,6 +199,7 @@ describe('PokemonController', () => {
           _id: 'mock-id-1',
           name: 'pikachu',
           data: {
+            id: 25,
             name: 'pikachu',
             types: [{ slot: 1, type: { name: 'electric' } }],
             sprites: { front_default: 'url-to-sprite-1' },
@@ -210,6 +213,7 @@ describe('PokemonController', () => {
           _id: 'mock-id-2',
           name: 'bulbasaur',
           data: {
+            id: 1,
             name: 'bulbasaur',
             types: [{ slot: 1, type: { name: 'grass' } }],
             sprites: { front_default: 'url-to-sprite-2' },
@@ -235,11 +239,13 @@ describe('PokemonController', () => {
         count: 2,
         pokemons: expect.arrayContaining([
           expect.objectContaining({
-            id: 'mock-id-1',
+            _id: 'mock-id-1',
+            id: 25,
             name: 'pikachu'
           }),
           expect.objectContaining({
-            id: 'mock-id-2',
+            _id: 'mock-id-2',
+            id: 1,
             name: 'bulbasaur'
           })
         ])
@@ -288,6 +294,7 @@ describe('PokemonController', () => {
         _id: 'valid-id',
         name: 'pikachu',
         data: {
+          id: 25,
           name: 'pikachu',
           types: [{ slot: 1, type: { name: 'electric' } }],
           sprites: { front_default: 'url-to-sprite' },
@@ -309,7 +316,8 @@ describe('PokemonController', () => {
       // Verifica se status e json foram chamados corretamente
       expect(mockResponse.status).toHaveBeenCalledWith(200);
       expect(mockResponse.json).toHaveBeenCalledWith({
-        id: 'valid-id',
+        _id: 'valid-id',
+        id: 25,
         name: 'pikachu',
         types: [{ slot: 1, type: { name: 'electric' } }],
         sprites: { front_default: 'url-to-sprite' },
@@ -394,6 +402,7 @@ describe('PokemonController', () => {
         _id: 'valid-id',
         name: 'charmander',
         data: {
+          id: 4,
           name: 'charmander',
           types: [{ slot: 1, type: { name: 'fire' } }],
           sprites: { front_default: 'url-to-sprite' },
@@ -417,7 +426,8 @@ describe('PokemonController', () => {
       expect(mockResponse.json).toHaveBeenCalledWith({
         message: 'Pokémon atualizado com sucesso para charmander',
         pokemon: {
-          id: 'valid-id',
+          _id: 'valid-id',
+          id: 4,
           name: 'charmander',
           types: [{ slot: 1, type: { name: 'fire' } }],
           sprites: { front_default: 'url-to-sprite' },

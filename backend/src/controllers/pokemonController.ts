@@ -24,7 +24,8 @@ export class PokemonController {
 
       // Mapeia os Pokémons para retornar apenas os campos necessários
       const formattedPokemons = pokemons.map(pokemon => ({
-        id: pokemon._id,
+        _id: pokemon._id,
+        id: pokemon.data.id,
         name: pokemon.name,
         types: pokemon.data.types,
         sprites: pokemon.data.sprites,
@@ -61,7 +62,8 @@ export class PokemonController {
 
       // Formata o Pokémon para retornar apenas os campos necessários
       const formattedPokemon = {
-        id: pokemon._id,
+        _id: pokemon._id,
+        id: pokemon.data.id,
         name: pokemon.name,
         types: pokemon.data.types,
         sprites: pokemon.data.sprites,
@@ -101,7 +103,8 @@ export class PokemonController {
 
       // Formata o Pokémon para retornar apenas os campos necessários
       const formattedPokemon = {
-        id: updatedPokemon._id,
+        _id: updatedPokemon._id,
+        id: updatedPokemon.data.id,
         name: updatedPokemon.name,
         types: updatedPokemon.data.types,
         sprites: updatedPokemon.data.sprites,
@@ -167,7 +170,8 @@ export class PokemonController {
       res.status(201).json({
         message: `Pokémon ${pokemon.name} cadastrado com sucesso`,
         pokemon: {
-          id: pokemon._id,
+          _id: pokemon._id,
+          id: pokemon.data.id,
           name: pokemon.name,
           // Retornamos apenas algumas informações básicas do Pokémon
           // para não sobrecarregar a resposta

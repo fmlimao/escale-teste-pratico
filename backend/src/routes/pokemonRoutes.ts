@@ -39,9 +39,12 @@ const pokemonController = new PokemonController();
  *                 pokemon:
  *                   type: object
  *                   properties:
- *                     id:
- *                       type: string
- *                       example: 60d21b4667d0d8992e610c85
+*                     _id:
+*                       type: string
+*                       example: 60d21b4667d0d8992e610c85
+*                     id:
+*                       type: integer
+*                       example: 25
  *                     name:
  *                       type: string
  *                       example: pikachu
@@ -183,9 +186,12 @@ router.get('/', (req, res, next) => pokemonController.findAll(req, res, next));
  *             schema:
  *               type: object
  *               properties:
- *                 id:
- *                   type: string
- *                   example: 60d21b4667d0d8992e610c85
+*                 _id:
+*                   type: string
+*                   example: 60d21b4667d0d8992e610c85
+*                 id:
+*                   type: integer
+*                   example: 25
  *                 name:
  *                   type: string
  *                   example: pikachu
@@ -298,9 +304,12 @@ router.get('/:id', (req, res, next) => pokemonController.findById(req, res, next
  *                 pokemon:
  *                   type: object
  *                   properties:
- *                     id:
- *                       type: string
- *                       example: 60d21b4667d0d8992e610c85
+*                     _id:
+*                       type: string
+*                       example: 60d21b4667d0d8992e610c85
+*                     id:
+*                       type: integer
+*                       example: 25
  *                     name:
  *                       type: string
  *                       example: pikachu
