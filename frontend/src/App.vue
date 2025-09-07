@@ -1,75 +1,19 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import api from './services/api';
+import { ref, onMounted, computed } from 'vue';
+import { usePokemonStore } from './stores/pokemonStore';
 
-// Definição do tipo Pokemon
-interface Pokemon {
-  _id: string;
-  id: number;
-  name: string;
-  types: Array<{
-    slot: number;
-    type: {
-      name: string;
-      url: string;
-    }
-  }>;
-  sprites: {
-    front_default: string;
-    [key: string]: any;
-  };
-  abilities: Array<{
-    ability: {
-      name: string;
-      url: string;
-    };
-    is_hidden: boolean;
-    slot: number;
-  }>;
-  stats: Array<{
-    base_stat: number;
-    effort: number;
-    stat: {
-      name: string;
-      url: string;
-    }
-  }>;
-}
-
-const pokemons = ref<Pokemon[]>([]);
+const pokemonStore = usePokemonStore();
 const showModal = ref(false);
 const newPokemonName = ref('');
 const errorMessage = ref('');
-const isLoading = ref(false);
-const successMessage = ref('');
-const showSuccessMessage = ref(false);
 
-const fetchPokemons = async () => {
-  try {
-    const data = await api.getAll();
-    pokemons.value = data;
-  } catch (error) {
-    console.error('Erro ao buscar pokemons:', error);
-  }
-};
+// Computed properties para acessar o estado da store
+const pokemons = computed(() => pokemonStore.pokemons);
+const isLoading = computed(() => pokemonStore.isLoading);
+const successMessage = computed(() => pokemonStore.successMessage);
+const showSuccessMessage = computed(() => !!pokemonStore.successMessage);
 
-const deletePokemon = async (id: string, pokemonName: string) => {
-  if (confirm(`Tem certeza que deseja excluir o Pokemon ${pokemonName}?`)) {
-    try {
-      await api.delete(id);
-      // Atualiza a lista de pokemons após a exclusão
-      await fetchPokemons();
-      // Mostra mensagem de sucesso
-      showSuccessMessageWithTimeout(`Pokemon ${pokemonName} excluído com sucesso!`);
-    } catch (error) {
-      console.error('Erro ao excluir pokemon:', error);
-      if (error instanceof Error) {
-        showSuccessMessageWithTimeout(`Erro: ${error.message}`);
-      }
-    }
-  }
-};
-
+// Funções
 const openModal = () => {
   showModal.value = true;
   newPokemonName.value = '';
@@ -80,50 +24,30 @@ const closeModal = () => {
   showModal.value = false;
 };
 
-const showSuccessMessageWithTimeout = (message: string) => {
-  successMessage.value = message;
-  showSuccessMessage.value = true;
-
-  // Esconde a mensagem após 5 segundos
-  setTimeout(() => {
-    showSuccessMessage.value = false;
-  }, 5000);
-};
-
 const savePokemon = async () => {
   if (!newPokemonName.value.trim()) {
     errorMessage.value = 'O nome do Pokemon é obrigatório';
     return;
   }
 
-  isLoading.value = true;
   errorMessage.value = '';
+  const result = await pokemonStore.addPokemon(newPokemonName.value.trim());
 
-  try {
-    const response = await api.create(newPokemonName.value.trim());
+  if (result.success) {
     closeModal();
-    await fetchPokemons();
+  } else {
+    errorMessage.value = result.error || 'Erro ao adicionar Pokemon. Tente novamente.';
+  }
+};
 
-    // Exibe a mensagem de sucesso
-    const pokemonName = response.name || newPokemonName.value;
-    showSuccessMessageWithTimeout(`Pokemon ${pokemonName} adicionado com sucesso!`);
-  } catch (error: any) {
-    console.error('Erro ao salvar pokemon:', error);
-
-    // Tratamento de erros
-    if (error instanceof Error) {
-      // Erro já formatado pelo serviço da API
-      errorMessage.value = error.message;
-    } else {
-      errorMessage.value = 'Erro ao adicionar Pokemon. Tente novamente.';
-    }
-  } finally {
-    isLoading.value = false;
+const deletePokemon = async (id: string, pokemonName: string) => {
+  if (confirm(`Tem certeza que deseja excluir o Pokemon ${pokemonName}?`)) {
+    await pokemonStore.deletePokemon(id, pokemonName);
   }
 };
 
 onMounted(() => {
-  fetchPokemons();
+  pokemonStore.fetchPokemons();
 });
 </script>
 
