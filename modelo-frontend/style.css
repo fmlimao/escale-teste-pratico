@@ -25,11 +25,6 @@ h6 {
   margin: 0.5em 0;
   font-family: "Flexo-Medium", arial, sans-serif;
 }
-h1 {
-  font-size: 2em;
-  line-height: 1.1;
-  margin: 0.5em 0;
-}
 .container {
   margin: 15px;
   box-sizing: border-box;
@@ -103,7 +98,6 @@ ul {
   display: block;
   border-radius: 5px;
   text-align: center;
-  text-decoration: none;
 }
 .pokedex-results .results li a img {
   max-width: 100%;
@@ -134,8 +128,4 @@ ul {
   text-align: center;
   background-color: #F2F2F2;
   color: #212121;
-}
-
-#app {
-  width: 100%;
 }

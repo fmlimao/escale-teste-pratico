@@ -1,30 +1,94 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import { ref, onMounted } from 'vue';
+import api from './services/api';
+
+// Definição do tipo Pokemon
+interface Pokemon {
+  _id: string;
+  id: number;
+  name: string;
+  types: Array<{
+    slot: number;
+    type: {
+      name: string;
+      url: string;
+    }
+  }>;
+  sprites: {
+    front_default: string;
+    [key: string]: any;
+  };
+  abilities: Array<{
+    ability: {
+      name: string;
+      url: string;
+    };
+    is_hidden: boolean;
+    slot: number;
+  }>;
+  stats: Array<{
+    base_stat: number;
+    effort: number;
+    stat: {
+      name: string;
+      url: string;
+    }
+  }>;
+}
+
+const pokemons = ref<Pokemon[]>([]);
+
+const fetchPokemons = async () => {
+  try {
+    const data = await api.getAll();
+    pokemons.value = data;
+  } catch (error) {
+    console.error('Erro ao buscar pokemons:', error);
+  }
+};
+
+onMounted(() => {
+  fetchPokemons();
+});
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div class="container">
+    <h1>Meus Pokemons</h1>
+
+    <div v-if="!pokemons.length" class="alert-info">
+      Nenhum pokemon encontrado.
+    </div>
+
+    <div class="pokedex-results">
+      <p class="results-count">
+        Total de pokemons: {{ pokemons.length }}
+      </p>
+
+      <ul class="results" style="height: auto;">
+        <li class="animating" v-for="pokemon in pokemons" :key="pokemon._id">
+          <a href="#">
+            <img :src="pokemon.sprites.front_default" :alt="pokemon.name">
+          </a>
+
+          <div class="pokemon-info">
+            <p class="id">
+              <span class="number-prefix">Nº&nbsp;</span>{{ pokemon.id }}
+            </p>
+            <h5>{{ pokemon.name }}</h5>
+
+            <div class="abilities">
+              <span v-for="type in pokemon.types" :key="type.slot">
+                {{ type.type.name }}
+              </span>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
+/* Estilos específicos do componente, se necessário */
 </style>

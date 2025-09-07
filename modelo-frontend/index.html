@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="container" id="AppVue">
+
+    <h1>Meus Pokemons</h1>
+
+    <div v-if="!pokemons.length" class="alert-info">
+      Nenhum pokemon encontrado.
+    </div>
+
+    <div class="pokedex-results">
+
+      <p class="results-count">
+        Total de pokemons: {{ pokemons.length }}
+      </p>
+
+      <ul class="results" style="height: auto;">
+        <li class="animating" v-for="pokemon in pokemons" :key="pokemon.id">
+          <a href="/br/pokedex/bulbasaur">
+            <img :src="pokemon.sprites.front_default" :alt="pokemon.name">
+          </a>
+
+          <div class="pokemon-info">
+            <p class="id">
+              <span class="number-prefix">Nº&nbsp;</span>{{ pokemon.id }}
+            </p>
+            <h5>{{ pokemon.name }}</h5>
+
+            <div class="abilities" v-for="type in pokemon.types">
+              <span>{{ type.type.name }}</span>
+            </div>
+          </div>
+        </li>
+      </ul>
+
+    </div>
+    <!-- end::pokedex-results -->
+
+  </div>
+
+  <!-- Vue2 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+  <script>
+    const api = {
+      host: 'http://localhost:3000/api/pokemons',
+
+      getAll() {
+        return fetch(this.host)
+          .then(res => res.json())
+          .then(res => res.pokemons);
+      },
+
+      create() {
+        return fetch(this.host, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ name: 'New Pokemon' })
+        }).then(res => res.json());
+      },
+
+      getOne(id) {
+        return fetch(`${this.host}/${id}`).then(res => res.json());
+      },
+
+      update(id) {
+        return fetch(`${this.host}/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ name: 'Updated Pokemon' })
+        }).then(res => res.json());
+      },
+
+      delete(id) {
+        return fetch(`${this.host}/${id}`, {
+          method: 'DELETE'
+        }).then(res => res.json());
+      }
+    }
+
+    const app = new Vue({
+      el: '#AppVue',
+      data: {
+        pokemons: []
+      },
+      methods: {
+        fetchPokemons() {
+          api.getAll().then(data => {
+            this.pokemons = data;
+          });
+        }
+      },
+      mounted() {
+        this.fetchPokemons();
+      }
+    })
+  </script>
+</body>
+
+</html>
