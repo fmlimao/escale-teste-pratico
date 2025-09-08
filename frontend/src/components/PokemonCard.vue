@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { usePokemonStore } from '../stores/pokemonStore';
+import { getPokemonImageUrl } from '../utils/pokemonImageUtils';
 
 // Props
 interface Props {
@@ -49,7 +50,7 @@ const handleEdit = () => {
 <template>
   <li class="animating">
     <a href="#" @click.prevent="viewDetails">
-      <img :src="pokemon.sprites.front_default" :alt="pokemon.name">
+      <img :src="getPokemonImageUrl(pokemon.sprites)" :alt="pokemon.name">
     </a>
 
     <div class="pokemon-info">

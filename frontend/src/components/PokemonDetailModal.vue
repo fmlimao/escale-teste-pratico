@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
 import { usePokemonStore } from '../stores/pokemonStore';
+import { getPokemonImageUrl } from '../utils/pokemonImageUtils';
 
 // Props
 interface Props {
@@ -78,7 +79,7 @@ onMounted(() => {
         <div v-else-if="pokemon" class="pokemon-details">
           <div class="pokemon-header">
             <div class="pokemon-image">
-              <img :src="pokemon.sprites.front_default" :alt="pokemon.name">
+              <img :src="getPokemonImageUrl(pokemon.sprites)" :alt="pokemon.name">
             </div>
             <div class="pokemon-info-header">
               <p class="pokemon-id">Nº {{ pokemon.id }}</p>
