@@ -32,7 +32,10 @@ onMounted(() => {
 <template>
   <div class="container">
     <div class="header-container">
-      <h1>Meus Pokemons</h1>
+      <h1>
+        <img src="/images/poke-ball.png" alt="Pokeball" class="pokeball-icon" />
+        Escale Pokedex
+      </h1>
       <button class="add-button" @click="openModal">
         <span class="add-icon">+</span>
         Adicionar Pokemon
@@ -64,5 +67,16 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* Estilos específicos do componente, se necessário */
+.pokeball-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+h1 {
+  display: flex;
+  align-items: center;
+  color: #e3350d; /* Vermelho Pokémon */
+}
 </style>
