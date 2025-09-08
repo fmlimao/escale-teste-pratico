@@ -4,6 +4,7 @@ import { usePokemonStore } from './stores/pokemonStore';
 import PokemonList from './components/PokemonList.vue';
 import AlertMessage from './components/AlertMessage.vue';
 import AddPokemonModal from './components/AddPokemonModal.vue';
+import AiInfoMessage from './components/AiInfoMessage.vue';
 
 const pokemonStore = usePokemonStore();
 const showModal = ref(false);
@@ -12,6 +13,7 @@ const showModal = ref(false);
 const pokemons = computed(() => pokemonStore.pokemons);
 const successMessage = computed(() => pokemonStore.successMessage);
 const showSuccessMessage = computed(() => !!pokemonStore.successMessage);
+const aiMessage = computed(() => pokemonStore.aiMessage);
 
 // Funções
 const openModal = () => {
@@ -41,6 +43,10 @@ onMounted(() => {
       type="success"
       :message="successMessage"
       :show="showSuccessMessage"
+    />
+    
+    <AiInfoMessage
+      :message="aiMessage"
     />
 
     <div v-if="!pokemons.length" class="alert-info">

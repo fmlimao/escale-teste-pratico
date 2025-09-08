@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import api from '../services/api';
+import aiService from '../services/aiService';
 
 interface Pokemon {
   _id: string;
@@ -40,6 +41,7 @@ export const usePokemonStore = defineStore('pokemon', () => {
   const isLoading = ref(false);
   const error = ref<string | null>(null);
   const successMessage = ref<string | null>(null);
+  const aiMessage = ref<string | null>(null);
 
   // Buscar todos os pokemons
   const fetchPokemons = async () => {
@@ -65,15 +67,18 @@ export const usePokemonStore = defineStore('pokemon', () => {
   const addPokemon = async (name: string) => {
     isLoading.value = true;
     error.value = null;
-
+    
     try {
       const response = await api.create(name);
       await fetchPokemons(); // Atualiza a lista após adicionar
-
+      
       // Define a mensagem de sucesso
-      const pokemonName = response.name || name;
+      const pokemonName = response.pokemon?.name || name;
       showSuccessMessage(`Pokemon ${pokemonName} adicionado com sucesso!`);
-
+      
+      // Busca informações de IA sobre o Pokémon
+      fetchAiInfo(pokemonName);
+      
       return { success: true };
     } catch (err) {
       if (err instanceof Error) {
@@ -130,15 +135,18 @@ export const usePokemonStore = defineStore('pokemon', () => {
   const updatePokemon = async (id: string, name: string) => {
     isLoading.value = true;
     error.value = null;
-
+    
     try {
       const response = await api.update(id, name);
       await fetchPokemons(); // Atualiza a lista após editar
-
+      
       // Define a mensagem de sucesso
       const pokemonName = response.pokemon?.name || name;
       showSuccessMessage(`Pokemon atualizado para ${pokemonName} com sucesso!`);
-
+      
+      // Busca informações de IA sobre o Pokémon
+      fetchAiInfo(pokemonName);
+      
       return { success: true };
     } catch (err) {
       if (err instanceof Error) {
@@ -152,16 +160,31 @@ export const usePokemonStore = defineStore('pokemon', () => {
       isLoading.value = false;
     }
   };
+  
+  // Busca informações de IA sobre um Pokémon
+  const fetchAiInfo = async (pokemonName: string) => {
+    try {
+      const info = await aiService.getPokemonInfo(pokemonName);
+      if (info) {
+        aiMessage.value = info;
+      }
+    } catch (error) {
+      // Silenciosamente ignora erros
+      console.warn('Erro ao buscar informações de IA:', error);
+    }
+  };
 
   return {
     pokemons,
     isLoading,
     error,
     successMessage,
+    aiMessage,
     fetchPokemons,
     addPokemon,
     deletePokemon,
     updatePokemon,
-    showSuccessMessage
+    showSuccessMessage,
+    fetchAiInfo
   };
 });

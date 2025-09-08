@@ -208,6 +208,11 @@ A documentação completa da API está disponível em: http://localhost:3000/api
    - Testes para componentes Vue
    - Mocks para serviços de API
    - Testes de interação do usuário
+   
+6. **Integração com IA**:
+   - Informações geradas por IA sobre cada Pokémon
+   - Exibição de curiosidades ao adicionar ou editar Pokémons
+   - Integração com webhook externo para processamento de IA
 
 ## Detalhes dos Testes
 
@@ -227,6 +232,15 @@ A documentação completa da API está disponível em: http://localhost:3000/api
 - Testes de componentes com @vue/test-utils
 - Testes de interação do usuário (cliques, formulários, etc.)
 
+## Integração com IA
+
+O projeto inclui uma integração com um serviço de IA que fornece informações interessantes sobre os Pokémons:
+
+- **Funcionamento**: Ao adicionar ou editar um Pokémon, uma requisição é enviada para um webhook que processa o nome do Pokémon e retorna informações geradas por IA.
+- **Exibição**: As informações são exibidas em um componente especial no topo da listagem, com estilo diferenciado.
+- **Tolerância a falhas**: A integração foi implementada de forma resiliente, não afetando o funcionamento principal do aplicativo caso o serviço de IA esteja indisponível.
+- **Webhook**: `https://n8n.projetosfm.com.br/webhook/escale-pokemon`
+
 ## Observações
 
 - O projeto foi desenvolvido com foco em boas práticas de código, como Clean Code e SOLID
@@ -234,3 +248,4 @@ A documentação completa da API está disponível em: http://localhost:3000/api
 - O frontend utiliza componentes modulares e reutilizáveis
 - Todos os endpoints da API são documentados com Swagger
 - Implementação completa de testes unitários tanto no backend quanto no frontend
+- Integração com IA para fornecer uma experiência diferenciada ao usuário
