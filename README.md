@@ -232,7 +232,9 @@ A documentação completa da API está disponível em: http://localhost:3000/api
 - Testes de componentes com @vue/test-utils
 - Testes de interação do usuário (cliques, formulários, etc.)
 
-## Integração com IA
+## Recursos de IA
+
+### Integração com IA para Informações Contextuais
 
 O projeto inclui uma integração com um serviço de IA que fornece informações interessantes sobre os Pokémons:
 
@@ -240,6 +242,32 @@ O projeto inclui uma integração com um serviço de IA que fornece informaçõe
 - **Exibição**: As informações são exibidas em um componente especial no topo da listagem, com estilo diferenciado.
 - **Tolerância a falhas**: A integração foi implementada de forma resiliente, não afetando o funcionamento principal do aplicativo caso o serviço de IA esteja indisponível.
 - **Webhook**: `https://n8n.projetosfm.com.br/webhook/escale-pokemon`
+
+### Chatbot Assistente Pokémon com IA Avançada
+
+O projeto também inclui um chatbot assistente com IA avançada que ajuda os usuários a interagir com sua coleção de Pokémons:
+
+- **Funcionalidades**:
+  - Responde a perguntas sobre Pokémons específicos (tipos, habilidades, estatísticas)
+  - Fornece informações sobre a coleção do usuário
+  - Processa linguagem natural para entender diferentes formas de perguntas
+  - Oferece sugestões de perguntas para facilitar o início da interação
+  - Análise contextual da coleção completa do usuário
+
+- **Tecnologia**:
+  - Processamento de linguagem natural para interpretar perguntas
+  - Integração com webhook de IA avançada que recebe a coleção completa do usuário
+  - Respostas contextuais baseadas no conhecimento específico dos Pokémons do usuário
+  - Interface de chat interativa e responsiva
+  - Sistema de fallback em camadas para garantir sempre uma resposta útil
+  - Webhook: `https://n8n.projetosfm.com.br/webhook/escale-chatbot`
+
+- **Experiência do usuário**:
+  - Botão flutuante para acesso rápido
+  - Mensagens de boas-vindas e ajuda
+  - Indicador de digitação para feedback visual
+  - Design alinhado com a identidade visual do aplicativo
+  - Respostas personalizadas baseadas na coleção específica do usuário
 
 ## Decisões de Arquitetura
 
@@ -337,6 +365,12 @@ O projeto inclui uma integração com um serviço de IA que fornece informaçõe
 
 6. **Métricas de Usuário**:
    - Implementar análise de uso para entender melhor o comportamento do usuário.
+   
+7. **Chatbot Assistente**:
+   - Chatbot interativo para ajudar com informações sobre Pokémons
+   - Processamento de linguagem natural para entender perguntas
+   - Respostas contextuais baseadas na coleção do usuário
+   - Sugestões de perguntas para facilitar a interação
 
 ## Observações
 
@@ -346,3 +380,4 @@ O projeto inclui uma integração com um serviço de IA que fornece informaçõe
 - Todos os endpoints da API são documentados com Swagger
 - Implementação completa de testes unitários tanto no backend quanto no frontend
 - Integração com IA para fornecer uma experiência diferenciada ao usuário
+- Chatbot assistente para interação conversacional com a coleção de Pokémons

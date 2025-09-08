@@ -5,6 +5,7 @@ import PokemonList from './components/PokemonList.vue';
 import AlertMessage from './components/AlertMessage.vue';
 import AddPokemonModal from './components/AddPokemonModal.vue';
 import AiInfoMessage from './components/AiInfoMessage.vue';
+import ChatbotButton from './components/ChatbotButton.vue';
 
 const pokemonStore = usePokemonStore();
 const showModal = ref(false);
@@ -64,6 +65,9 @@ onMounted(() => {
     :show="showModal"
     @close="closeModal"
   />
+  
+  <!-- Chatbot -->
+  <ChatbotButton />
 </template>
 
 <style scoped>
