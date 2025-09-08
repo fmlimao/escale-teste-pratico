@@ -241,6 +241,103 @@ O projeto inclui uma integração com um serviço de IA que fornece informaçõe
 - **Tolerância a falhas**: A integração foi implementada de forma resiliente, não afetando o funcionamento principal do aplicativo caso o serviço de IA esteja indisponível.
 - **Webhook**: `https://n8n.projetosfm.com.br/webhook/escale-pokemon`
 
+## Decisões de Arquitetura
+
+### Backend
+
+1. **Arquitetura em Camadas (MVC+)**:
+   - **Controllers**: Responsáveis pela manipulação das requisições HTTP e respostas.
+   - **Services**: Contêm a lógica de negócio e orquestram as operações.
+   - **Models**: Definem a estrutura dos dados e interagem com o banco de dados.
+   - **Middlewares**: Processam requisições antes de chegarem aos controllers.
+   - **Routes**: Definem os endpoints da API e conectam às funções do controller.
+   - **Utils**: Funções utilitárias reutilizáveis.
+
+2. **Injeção de Dependências Simplificada**:
+   - Serviços são instanciados e injetados nos controllers, facilitando os testes unitários.
+   - Redução do acoplamento entre componentes.
+
+3. **Tratamento Centralizado de Erros**:
+   - Middleware global para capturar e formatar erros.
+   - Função utilitária `createError` para padronizar a estrutura de erros.
+
+4. **Validação de Dados**:
+   - Validação de entrada nos controllers antes de processar a requisição.
+   - Feedback claro ao usuário sobre problemas nos dados enviados.
+
+5. **Documentação Automática**:
+   - Swagger integrado diretamente no código via JSDoc.
+   - Facilita a manutenção da documentação junto com o código.
+
+### Frontend
+
+1. **Arquitetura Baseada em Componentes**:
+   - Componentes Vue.js reutilizáveis e modulares.
+   - Separação clara entre apresentação (templates), lógica (script) e estilo (CSS).
+
+2. **Gerenciamento de Estado Centralizado**:
+   - Pinia para gerenciar o estado global da aplicação.
+   - Ações, estados e getters bem definidos.
+
+3. **Comunicação com API**:
+   - Serviço dedicado para comunicação com o backend.
+   - Tratamento padronizado de erros e respostas.
+
+4. **Responsividade**:
+   - Design adaptável a diferentes tamanhos de tela.
+   - Uso de CSS flexbox e media queries.
+
+5. **Integração com IA**:
+   - Arquitetura resiliente que não compromete a funcionalidade principal em caso de falhas.
+   - Separação clara entre a lógica de IA e a lógica principal da aplicação.
+
+## Melhorias Futuras
+
+### Backend
+
+1. **Autenticação e Autorização**:
+   - Implementar JWT para autenticação de usuários.
+   - Adicionar níveis de permissão para diferentes operações.
+
+2. **Cache**:
+   - Implementar cache para consultas frequentes à PokeAPI.
+   - Reduzir o número de requisições externas e melhorar o desempenho.
+
+3. **Paginação e Filtros Avançados**:
+   - Adicionar paginação na listagem de Pokémons.
+   - Implementar filtros por tipo, habilidades, estatísticas, etc.
+
+4. **Logging e Monitoramento**:
+   - Adicionar um sistema de logging mais robusto.
+   - Implementar monitoramento de performance e erros.
+
+5. **Migração para GraphQL**:
+   - Considerar a migração para GraphQL para consultas mais flexíveis.
+
+### Frontend
+
+1. **Tema Escuro/Claro**:
+   - Implementar alternância entre temas escuro e claro.
+   - Persistir a preferência do usuário.
+
+2. **Internacionalização (i18n)**:
+   - Suporte para múltiplos idiomas.
+
+3. **PWA (Progressive Web App)**:
+   - Transformar a aplicação em uma PWA para melhor experiência mobile.
+   - Adicionar funcionalidades offline.
+
+4. **Animações e Transições**:
+   - Melhorar as animações entre estados da aplicação.
+   - Adicionar transições mais suaves entre páginas.
+
+5. **Pesquisa Avançada**:
+   - Implementar busca por vários critérios (tipo, habilidades, etc).
+   - Adicionar autocomplete na busca.
+
+6. **Métricas de Usuário**:
+   - Implementar análise de uso para entender melhor o comportamento do usuário.
+
 ## Observações
 
 - O projeto foi desenvolvido com foco em boas práticas de código, como Clean Code e SOLID
