@@ -38,7 +38,7 @@ export class PokemonService {
     const pokemon = await Pokemon.findOne({ name: name.toLowerCase() });
     return !!pokemon;
   }
-  
+
   /**
    * Busca todos os Pokémons cadastrados no banco de dados
    * @returns Lista de Pokémons cadastrados
@@ -59,7 +59,7 @@ export class PokemonService {
           $sort: { numericId: 1 } // Ordenação ascendente pelo ID numérico
         }
       ]);
-      
+
       // Convertemos o resultado da agregação de volta para documentos do Mongoose
       return pokemons.map(pokemon => {
         // Removemos o campo temporário numericId
@@ -71,7 +71,7 @@ export class PokemonService {
       throw createError('Erro ao buscar Pokémons', 500);
     }
   }
-  
+
   /* istanbul ignore next */
   async findPokemonById(id: string): Promise<IPokemon> {
     try {
@@ -84,42 +84,42 @@ export class PokemonService {
       if ((error as any).statusCode === 404) {
         throw error;
       }
-      
+
       if ((error as any).name === 'CastError') {
         throw createError(`ID ${id} inválido`, 400);
       }
-      
+
       console.error('Erro ao buscar Pokémon por ID:', error);
       throw createError('Erro ao buscar Pokémon', 500);
     }
   }
-  
+
   /* istanbul ignore next */
   async updatePokemon(id: string, nameOrId: string): Promise<IPokemon> {
     try {
       // Verificar se o Pokémon a ser atualizado existe
       const existingPokemon = await this.findPokemonById(id);
-      
+
       // Buscar os novos dados do Pokémon na API
       const pokemonData = await this.fetchPokemonFromAPI(nameOrId);
-      
+
       // Pega o nome real do Pokémon da resposta da API
       const realPokemonName = pokemonData.name.toLowerCase();
-      
+
       // Verificar se o novo Pokémon já existe no banco (exceto o próprio que está sendo editado)
-      const duplicatePokemon = await Pokemon.findOne({ 
+      const duplicatePokemon = await Pokemon.findOne({
         name: realPokemonName,
         _id: { $ne: id } // Excluir o próprio Pokémon da verificação
       });
-      
+
       if (duplicatePokemon) {
         throw createError(`Pokémon ${realPokemonName} já está cadastrado com outro ID`, 409);
       }
-      
+
       // Atualizar o Pokémon com os novos dados
       existingPokemon.name = realPokemonName;
       existingPokemon.data = pokemonData;
-      
+
       await existingPokemon.save();
       return existingPokemon;
     } catch (error) {
@@ -127,21 +127,21 @@ export class PokemonService {
       if ((error as any).statusCode) {
         throw error;
       }
-      
+
       console.error('Erro ao atualizar Pokémon:', error);
       throw createError('Erro ao atualizar Pokémon', 500);
     }
   }
-  
+
   /* istanbul ignore next */
   async deletePokemon(id: string): Promise<void> {
     try {
       // Verificar se o Pokémon existe antes de tentar deletar
       await this.findPokemonById(id);
-      
+
       // Deletar o Pokémon
       const result = await Pokemon.deleteOne({ _id: id });
-      
+
       // Verificar se a exclusão foi bem-sucedida
       if (result.deletedCount === 0) {
         throw createError(`Não foi possível deletar o Pokémon com ID ${id}`, 500);
@@ -151,12 +151,12 @@ export class PokemonService {
       if ((error as any).statusCode) {
         throw error;
       }
-      
+
       // Se for um erro de ID inválido (CastError), propaga como Bad Request
       if ((error as any).name === 'CastError') {
         throw createError(`ID ${id} inválido`, 400);
       }
-      
+
       console.error('Erro ao deletar Pokémon:', error);
       throw createError('Erro ao deletar Pokémon', 500);
     }

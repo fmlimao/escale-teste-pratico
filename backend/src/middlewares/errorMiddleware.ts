@@ -25,23 +25,23 @@ export const notFoundMiddleware = (req: Request, res: Response, next: NextFuncti
 export const errorMiddleware = (err: AppError, req: Request, res: Response, next: NextFunction): void => {
   // Se o erro já tiver um código de status, use-o; caso contrário, use 500
   const statusCode = err.statusCode || 500;
-  
+
   // Determinar a mensagem de erro
   /* istanbul ignore next */
   let message = err.message || 'Erro interno do servidor';
-  
+
   // Em ambiente de produção, não envie detalhes de erros internos
   /* istanbul ignore next */
   if (statusCode === 500 && process.env.NODE_ENV === 'production') {
     message = 'Erro interno do servidor';
   }
-  
+
   // Log do erro (apenas em ambiente de desenvolvimento ou homologação)
   /* istanbul ignore next */
   if (process.env.NODE_ENV !== 'production') {
     console.error(`[Erro ${statusCode}] ${err.stack || err}`);
   }
-  
+
   // Enviar resposta de erro
   res.status(statusCode).json({
     error: {

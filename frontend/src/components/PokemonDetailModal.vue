@@ -28,10 +28,10 @@ const closeModal = () => {
 
 const fetchPokemonDetails = async () => {
   if (!props.pokemonId) return;
-  
+
   isLoading.value = true;
   errorMessage.value = '';
-  
+
   try {
     const data = await fetch(`/api/pokemons/${props.pokemonId}`).then(res => res.json());
     pokemon.value = data;
@@ -70,11 +70,11 @@ onMounted(() => {
         <div v-if="errorMessage" class="error-message">
           {{ errorMessage }}
         </div>
-        
+
         <div v-if="isLoading" class="loading">
           Carregando detalhes...
         </div>
-        
+
         <div v-else-if="pokemon" class="pokemon-details">
           <div class="pokemon-header">
             <div class="pokemon-image">
@@ -90,7 +90,7 @@ onMounted(() => {
               </div>
             </div>
           </div>
-          
+
           <div class="pokemon-data-section">
             <h4>Habilidades</h4>
             <ul class="abilities-list">
@@ -100,7 +100,7 @@ onMounted(() => {
               </li>
             </ul>
           </div>
-          
+
           <div class="pokemon-data-section">
             <h4>Status</h4>
             <table class="stats-table">

@@ -5,12 +5,12 @@ const api = {
     try {
       const res = await fetch(this.host);
       const data = await res.json();
-      
+
       if (!res.ok) {
         const errorMessage = data.error?.message || 'Erro ao buscar pokemons';
         throw new Error(errorMessage);
       }
-      
+
       return data.pokemons;
     } catch (error) {
       if (error instanceof Error) {
@@ -32,13 +32,13 @@ const api = {
       });
 
       const data = await res.json();
-      
+
       if (!res.ok) {
         // Formato de erro da API: {"error":{"code":404,"message":"Pokémon X não encontrado na PokeAPI"}}
         const errorMessage = data.error?.message || 'Erro ao criar pokemon';
         throw new Error(errorMessage);
       }
-      
+
       return data;
     } catch (error) {
       if (error instanceof Error) {
@@ -53,12 +53,12 @@ const api = {
     try {
       const res = await fetch(`${this.host}/${id}`);
       const data = await res.json();
-      
+
       if (!res.ok) {
         const errorMessage = data.error?.message || `Erro ao buscar pokemon com id ${id}`;
         throw new Error(errorMessage);
       }
-      
+
       return data;
     } catch (error) {
       if (error instanceof Error) {
@@ -78,14 +78,14 @@ const api = {
         },
         body: JSON.stringify({ name })
       });
-      
+
       const data = await res.json();
-      
+
       if (!res.ok) {
         const errorMessage = data.error?.message || `Erro ao atualizar pokemon com id ${id}`;
         throw new Error(errorMessage);
       }
-      
+
       return data;
     } catch (error) {
       if (error instanceof Error) {
@@ -101,14 +101,14 @@ const api = {
       const res = await fetch(`${this.host}/${id}`, {
         method: 'DELETE'
       });
-      
+
       const data = await res.json();
-      
+
       if (!res.ok) {
         const errorMessage = data.error?.message || `Erro ao excluir pokemon com id ${id}`;
         throw new Error(errorMessage);
       }
-      
+
       return data;
     } catch (error) {
       if (error instanceof Error) {

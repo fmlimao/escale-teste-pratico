@@ -93,10 +93,10 @@ describe('Error Middlewares', () => {
     it('deve usar mensagem genérica em produção para erros 500', () => {
       // Salva o NODE_ENV original
       const originalNodeEnv = process.env.NODE_ENV;
-      
+
       // Define NODE_ENV como production
       process.env.NODE_ENV = 'production';
-      
+
       // Cria um erro com statusCode 500
       const error: AppError = new Error('Detalhes do erro interno');
       error.statusCode = 500;
@@ -117,7 +117,7 @@ describe('Error Middlewares', () => {
           message: 'Erro interno do servidor'
         }
       });
-      
+
       // Restaura o NODE_ENV original
       process.env.NODE_ENV = originalNodeEnv;
     });
@@ -126,7 +126,7 @@ describe('Error Middlewares', () => {
   describe('createError', () => {
     it('deve criar um erro com a mensagem e statusCode fornecidos', () => {
       const error = createError('Erro de teste', 400);
-      
+
       expect(error).toBeInstanceOf(Error);
       expect(error.message).toBe('Erro de teste');
       expect(error.statusCode).toBe(400);

@@ -13,11 +13,11 @@ describe('PokemonController', () => {
   let mockResponse: Partial<Response>;
   let mockNext: jest.Mock;
   let mockPokemonService: jest.Mocked<PokemonService>;
-  
+
   beforeEach(() => {
     // Reset mocks
     jest.clearAllMocks();
-    
+
     // Mock do PokemonService
     mockPokemonService = {
       createPokemon: jest.fn(),
@@ -28,69 +28,69 @@ describe('PokemonController', () => {
       updatePokemon: jest.fn(),
       deletePokemon: jest.fn()
     } as unknown as jest.Mocked<PokemonService>;
-    
+
     // Substitui o construtor do PokemonService para retornar nosso mock
     (PokemonService as jest.Mock).mockImplementation(() => mockPokemonService);
-    
+
     // Mock da função createError
     (createError as jest.Mock) = jest.fn().mockImplementation((message, statusCode) => {
       const error = new Error(message);
       (error as any).statusCode = statusCode;
       return error;
     });
-    
+
     // Cria uma nova instância do controller com o serviço mockado
     pokemonController = new PokemonController();
-    
+
     // Mock do Request e Response
     mockRequest = {
       body: {}
     };
-    
+
     mockResponse = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn()
     };
-    
+
     // Mock da função next
     mockNext = jest.fn();
   });
-  
+
   describe('create', () => {
     it('deve chamar next com erro 400 quando o nome não é fornecido', async () => {
       // Configura o mock request sem nome
       mockRequest.body = {};
-      
+
       // Chama o método create
       await pokemonController.create(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
-      
+
       // Verifica se next foi chamado com o erro correto
       expect(mockNext).toHaveBeenCalled();
       expect(createError).toHaveBeenCalledWith('Nome ou ID do Pokémon é obrigatório', 400);
-      
+
       // Verifica se o serviço não foi chamado
       expect(mockPokemonService.createPokemon).not.toHaveBeenCalled();
     });
-    
+
     it('deve chamar next com erro 400 quando o nome não é uma string', async () => {
       // Configura o mock request com nome não-string
       mockRequest.body = { name: 123 };
-      
+
       // Chama o método create
       await pokemonController.create(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
-      
+
       // Verifica se next foi chamado com o erro correto
       expect(mockNext).toHaveBeenCalled();
       expect(createError).toHaveBeenCalledWith('Nome ou ID do Pokémon é obrigatório', 400);
-      
+
       // Verifica se o serviço não foi chamado
       expect(mockPokemonService.createPokemon).not.toHaveBeenCalled();
     });
-    
+
     it('deve criar um Pokémon com sucesso', async () => {
       // Configura o mock request com nome válido
       mockRequest.body = { name: 'pikachu' };
-      
+
       // Mock do resultado do serviço
       const mockPokemon = {
         _id: 'mock-id',
@@ -106,15 +106,15 @@ describe('PokemonController', () => {
         createdAt: new Date(),
         updatedAt: new Date()
       };
-      
+
       mockPokemonService.createPokemon.mockResolvedValueOnce(mockPokemon as any);
-      
+
       // Chama o método create
       await pokemonController.create(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
-      
+
       // Verifica se o serviço foi chamado corretamente
       expect(mockPokemonService.createPokemon).toHaveBeenCalledWith('pikachu');
-      
+
       // Verifica se status e json foram chamados corretamente
       expect(mockResponse.status).toHaveBeenCalledWith(201);
       expect(mockResponse.json).toHaveBeenCalledWith({
@@ -131,66 +131,66 @@ describe('PokemonController', () => {
         }
       });
     });
-    
+
     it('deve chamar next com erro 409 quando o Pokémon já existe', async () => {
       // Configura o mock request com nome válido
       mockRequest.body = { name: 'pikachu' };
-      
+
       // Mock do erro de Pokémon já existente
       const error = new Error('Pokémon pikachu já está cadastrado');
       mockPokemonService.createPokemon.mockRejectedValueOnce(error);
-      
+
       // Chama o método create
       await pokemonController.create(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
-      
+
       // Verifica se next foi chamado com o erro correto
       expect(mockNext).toHaveBeenCalled();
       expect(createError).toHaveBeenCalledWith('Pokémon pikachu já está cadastrado', 409);
     });
-    
+
     it('deve chamar next com erro 404 quando o Pokémon não é encontrado na API', async () => {
       // Configura o mock request com nome válido
       mockRequest.body = { name: 'invalid-pokemon' };
-      
+
       // Mock do erro de Pokémon não encontrado
       const error = new Error('Pokémon invalid-pokemon não encontrado na PokeAPI');
       mockPokemonService.createPokemon.mockRejectedValueOnce(error);
-      
+
       // Chama o método create
       await pokemonController.create(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
-      
+
       // Verifica se next foi chamado com o erro correto
       expect(mockNext).toHaveBeenCalled();
       expect(createError).toHaveBeenCalledWith('Pokémon invalid-pokemon não encontrado na PokeAPI', 404);
     });
-    
+
     it('deve chamar next com erro 500 para erros genéricos', async () => {
       // Configura o mock request com nome válido
       mockRequest.body = { name: 'pikachu' };
-      
+
       // Mock de um erro genérico
       const error = new Error('Erro interno');
       mockPokemonService.createPokemon.mockRejectedValueOnce(error);
-      
+
       // Mock do console.error para evitar logs nos testes
       const originalConsoleError = console.error;
       console.error = jest.fn();
-      
+
       // Chama o método create
       await pokemonController.create(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
-      
+
       // Verifica se next foi chamado com o erro correto
       expect(mockNext).toHaveBeenCalled();
       expect(createError).toHaveBeenCalledWith('Erro interno do servidor', 500);
-      
+
       // Verifica se o erro foi logado
       expect(console.error).toHaveBeenCalledWith('Erro ao criar Pokémon:', error);
-      
+
       // Restaura console.error
       console.error = originalConsoleError;
     });
   });
-  
+
   describe('findAll', () => {
     it('deve retornar a lista de Pokémons com sucesso', async () => {
       // Mock da lista de Pokémons
@@ -224,15 +224,15 @@ describe('PokemonController', () => {
           updatedAt: new Date()
         }
       ];
-      
+
       mockPokemonService.findAllPokemons.mockResolvedValueOnce(mockPokemons as any);
-      
+
       // Chama o método findAll
       await pokemonController.findAll(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
-      
+
       // Verifica se o serviço foi chamado
       expect(mockPokemonService.findAllPokemons).toHaveBeenCalled();
-      
+
       // Verifica se status e json foram chamados corretamente
       expect(mockResponse.status).toHaveBeenCalledWith(200);
       expect(mockResponse.json).toHaveBeenCalledWith({
@@ -251,44 +251,44 @@ describe('PokemonController', () => {
         ])
       });
     });
-    
+
     it('deve chamar next com o erro quando ocorre uma exceção', async () => {
       // Mock de erro
       const error = new Error('Erro ao buscar Pokémons');
       mockPokemonService.findAllPokemons.mockRejectedValueOnce(error);
-      
+
       // Chama o método findAll
       await pokemonController.findAll(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
-      
+
       // Verifica se next foi chamado com o erro
       expect(mockNext).toHaveBeenCalledWith(error);
-      
+
       // Verifica se status e json não foram chamados
       expect(mockResponse.status).not.toHaveBeenCalled();
       expect(mockResponse.json).not.toHaveBeenCalled();
     });
   });
-  
+
   describe('findById', () => {
     it('deve chamar next com erro 400 quando o ID não é fornecido', async () => {
       // Configura o mock request sem ID
       mockRequest.params = {};
-      
+
       // Chama o método findById
       await pokemonController.findById(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
-      
+
       // Verifica se next foi chamado com o erro correto
       expect(mockNext).toHaveBeenCalled();
       expect(createError).toHaveBeenCalledWith('ID do Pokémon é obrigatório', 400);
-      
+
       // Verifica se o serviço não foi chamado
       expect(mockPokemonService.findPokemonById).not.toHaveBeenCalled();
     });
-    
+
     it('deve retornar o Pokémon com sucesso quando o ID é válido', async () => {
       // Configura o mock request com ID válido
       mockRequest.params = { id: 'valid-id' };
-      
+
       // Mock do resultado do serviço
       const mockPokemon = {
         _id: 'valid-id',
@@ -304,15 +304,15 @@ describe('PokemonController', () => {
         createdAt: new Date(),
         updatedAt: new Date()
       };
-      
+
       mockPokemonService.findPokemonById.mockResolvedValueOnce(mockPokemon as any);
-      
+
       // Chama o método findById
       await pokemonController.findById(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
-      
+
       // Verifica se o serviço foi chamado corretamente
       expect(mockPokemonService.findPokemonById).toHaveBeenCalledWith('valid-id');
-      
+
       // Verifica se status e json foram chamados corretamente
       expect(mockResponse.status).toHaveBeenCalledWith(200);
       expect(mockResponse.json).toHaveBeenCalledWith({
@@ -326,77 +326,77 @@ describe('PokemonController', () => {
         createdAt: expect.any(Date)
       });
     });
-    
+
     it('deve chamar next com o erro quando ocorre uma exceção', async () => {
       // Configura o mock request com ID válido
       mockRequest.params = { id: 'valid-id' };
-      
+
       // Mock de erro
       const error = new Error('Pokémon não encontrado');
       mockPokemonService.findPokemonById.mockRejectedValueOnce(error);
-      
+
       // Chama o método findById
       await pokemonController.findById(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
-      
+
       // Verifica se next foi chamado com o erro
       expect(mockNext).toHaveBeenCalledWith(error);
     });
   });
-  
+
   describe('update', () => {
     it('deve chamar next com erro 400 quando o ID não é fornecido', async () => {
       // Configura o mock request sem ID
       mockRequest.params = {};
       mockRequest.body = { name: 'pikachu' };
-      
+
       // Chama o método update
       await pokemonController.update(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
-      
+
       // Verifica se next foi chamado com o erro correto
       expect(mockNext).toHaveBeenCalled();
       expect(createError).toHaveBeenCalledWith('ID do Pokémon é obrigatório', 400);
-      
+
       // Verifica se o serviço não foi chamado
       expect(mockPokemonService.updatePokemon).not.toHaveBeenCalled();
     });
-    
+
     it('deve chamar next com erro 400 quando o nome não é fornecido', async () => {
       // Configura o mock request com ID mas sem nome
       mockRequest.params = { id: 'valid-id' };
       mockRequest.body = {};
-      
+
       // Chama o método update
       await pokemonController.update(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
-      
+
       // Verifica se next foi chamado com o erro correto
       expect(mockNext).toHaveBeenCalled();
       expect(createError).toHaveBeenCalledWith('Nome ou ID do novo Pokémon é obrigatório', 400);
-      
+
       // Verifica se o serviço não foi chamado
       expect(mockPokemonService.updatePokemon).not.toHaveBeenCalled();
     });
-    
+
     it('deve chamar next com erro 400 quando o nome não é uma string', async () => {
       // Configura o mock request com ID mas com nome não-string
       mockRequest.params = { id: 'valid-id' };
       mockRequest.body = { name: 123 };
-      
+
       // Chama o método update
       await pokemonController.update(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
-      
+
       // Verifica se next foi chamado com o erro correto
       expect(mockNext).toHaveBeenCalled();
       expect(createError).toHaveBeenCalledWith('Nome ou ID do novo Pokémon é obrigatório', 400);
-      
+
       // Verifica se o serviço não foi chamado
       expect(mockPokemonService.updatePokemon).not.toHaveBeenCalled();
     });
-    
+
     it('deve atualizar o Pokémon com sucesso', async () => {
       // Configura o mock request com ID e nome válidos
       mockRequest.params = { id: 'valid-id' };
       mockRequest.body = { name: 'charmander' };
-      
+
       // Mock do resultado do serviço
       const mockPokemon = {
         _id: 'valid-id',
@@ -412,15 +412,15 @@ describe('PokemonController', () => {
         createdAt: new Date(),
         updatedAt: new Date()
       };
-      
+
       mockPokemonService.updatePokemon.mockResolvedValueOnce(mockPokemon as any);
-      
+
       // Chama o método update
       await pokemonController.update(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
-      
+
       // Verifica se o serviço foi chamado corretamente
       expect(mockPokemonService.updatePokemon).toHaveBeenCalledWith('valid-id', 'charmander');
-      
+
       // Verifica se status e json foram chamados corretamente
       expect(mockResponse.status).toHaveBeenCalledWith(200);
       expect(mockResponse.json).toHaveBeenCalledWith({
@@ -437,71 +437,71 @@ describe('PokemonController', () => {
         }
       });
     });
-    
+
     it('deve chamar next com o erro quando ocorre uma exceção', async () => {
       // Configura o mock request com ID e nome válidos
       mockRequest.params = { id: 'valid-id' };
       mockRequest.body = { name: 'charmander' };
-      
+
       // Mock de erro
       const error = new Error('Erro ao atualizar Pokémon');
       mockPokemonService.updatePokemon.mockRejectedValueOnce(error);
-      
+
       // Chama o método update
       await pokemonController.update(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
-      
+
       // Verifica se next foi chamado com o erro
       expect(mockNext).toHaveBeenCalledWith(error);
     });
   });
-  
+
   describe('delete', () => {
     it('deve chamar next com erro 400 quando o ID não é fornecido', async () => {
       // Configura o mock request sem ID
       mockRequest.params = {};
-      
+
       // Chama o método delete
       await pokemonController.delete(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
-      
+
       // Verifica se next foi chamado com o erro correto
       expect(mockNext).toHaveBeenCalled();
       expect(createError).toHaveBeenCalledWith('ID do Pokémon é obrigatório', 400);
-      
+
       // Verifica se o serviço não foi chamado
       expect(mockPokemonService.deletePokemon).not.toHaveBeenCalled();
     });
-    
+
     it('deve deletar o Pokémon com sucesso', async () => {
       // Configura o mock request com ID válido
       mockRequest.params = { id: 'valid-id' };
-      
+
       // Mock do serviço
       mockPokemonService.deletePokemon.mockResolvedValueOnce();
-      
+
       // Chama o método delete
       await pokemonController.delete(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
-      
+
       // Verifica se o serviço foi chamado corretamente
       expect(mockPokemonService.deletePokemon).toHaveBeenCalledWith('valid-id');
-      
+
       // Verifica se status e json foram chamados corretamente
       expect(mockResponse.status).toHaveBeenCalledWith(200);
       expect(mockResponse.json).toHaveBeenCalledWith({
         message: `Pokémon com ID valid-id foi deletado com sucesso`
       });
     });
-    
+
     it('deve chamar next com o erro quando ocorre uma exceção', async () => {
       // Configura o mock request com ID válido
       mockRequest.params = { id: 'valid-id' };
-      
+
       // Mock de erro
       const error = new Error('Erro ao deletar Pokémon');
       mockPokemonService.deletePokemon.mockRejectedValueOnce(error);
-      
+
       // Chama o método delete
       await pokemonController.delete(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
-      
+
       // Verifica se next foi chamado com o erro
       expect(mockNext).toHaveBeenCalledWith(error);
     });

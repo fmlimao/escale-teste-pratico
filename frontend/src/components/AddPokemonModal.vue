@@ -36,7 +36,7 @@ const savePokemon = async () => {
 
   try {
     const result = await pokemonStore.addPokemon(newPokemonName.value.trim());
-    
+
     if (result.success) {
       newPokemonName.value = '';
       closeModal();
@@ -63,11 +63,11 @@ const savePokemon = async () => {
         <form @submit.prevent="savePokemon">
           <div class="form-group">
             <label for="pokemonName">Nome do Pokemon:</label>
-            <input 
-              type="text" 
-              id="pokemonName" 
-              v-model="newPokemonName" 
-              required 
+            <input
+              type="text"
+              id="pokemonName"
+              v-model="newPokemonName"
+              required
               placeholder="Ex: pikachu"
               class="form-control"
             />

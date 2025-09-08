@@ -41,13 +41,13 @@ describe('PokemonCard.vue', () => {
 
     // Verifica se o nome do pokemon é exibido corretamente
     expect(wrapper.find('h5').text()).toBe('pikachu');
-    
+
     // Verifica se o ID é exibido corretamente
     expect(wrapper.find('.id').text()).toContain('25');
-    
+
     // Verifica se o tipo é exibido corretamente
     expect(wrapper.find('.abilities span').text()).toBe('electric');
-    
+
     // Verifica se a imagem tem o src correto
     expect(wrapper.find('img').attributes('src')).toBe(mockPokemon.sprites.front_default);
   });
@@ -68,7 +68,7 @@ describe('PokemonCard.vue', () => {
 
     // Simula o clique na imagem
     await wrapper.find('a').trigger('click');
-    
+
     // Verifica se o evento foi emitido com o ID correto
     expect(wrapper.emitted('view-details')).toBeTruthy();
     expect(wrapper.emitted('view-details')[0]).toEqual(['1']);
@@ -90,7 +90,7 @@ describe('PokemonCard.vue', () => {
 
     // Simula o clique no botão de edição
     await wrapper.find('.edit-button').trigger('click');
-    
+
     // Verifica se o evento foi emitido com o pokemon correto
     expect(wrapper.emitted('edit-pokemon')).toBeTruthy();
     expect(wrapper.emitted('edit-pokemon')[0]).toEqual([mockPokemon]);
@@ -118,13 +118,13 @@ describe('PokemonCard.vue', () => {
 
     // Acessa o store através do componente
     const pokemonStore = wrapper.vm.pokemonStore;
-    
+
     // Espia o método deletePokemon
     const deleteSpy = vi.spyOn(pokemonStore, 'deletePokemon');
-    
+
     // Simula o clique no botão de exclusão
     await wrapper.find('.delete-button').trigger('click');
-    
+
     // Verifica se o método foi chamado com os parâmetros corretos
     expect(deleteSpy).toHaveBeenCalledWith('1', 'pikachu');
   });

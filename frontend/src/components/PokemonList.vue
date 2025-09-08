@@ -64,22 +64,22 @@ const closeEditModal = () => {
     </p>
 
     <ul class="results" style="height: auto;">
-      <PokemonCard 
-        v-for="pokemon in pokemons" 
-        :key="pokemon._id" 
+      <PokemonCard
+        v-for="pokemon in pokemons"
+        :key="pokemon._id"
         :pokemon="pokemon"
         @view-details="handleViewDetails"
         @edit-pokemon="handleEditPokemon"
       />
     </ul>
-    
+
     <!-- Modal de detalhes do Pokemon -->
     <PokemonDetailModal
       :show="showDetailModal"
       :pokemon-id="selectedPokemonId"
       @close="closeDetailModal"
     />
-    
+
     <!-- Modal de edição do Pokemon -->
     <EditPokemonModal
       :show="showEditModal"

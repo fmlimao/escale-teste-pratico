@@ -45,7 +45,7 @@ export const usePokemonStore = defineStore('pokemon', () => {
   const fetchPokemons = async () => {
     isLoading.value = true;
     error.value = null;
-    
+
     try {
       const data = await api.getAll();
       pokemons.value = data;
@@ -65,15 +65,15 @@ export const usePokemonStore = defineStore('pokemon', () => {
   const addPokemon = async (name: string) => {
     isLoading.value = true;
     error.value = null;
-    
+
     try {
       const response = await api.create(name);
       await fetchPokemons(); // Atualiza a lista após adicionar
-      
+
       // Define a mensagem de sucesso
       const pokemonName = response.name || name;
       showSuccessMessage(`Pokemon ${pokemonName} adicionado com sucesso!`);
-      
+
       return { success: true };
     } catch (err) {
       if (err instanceof Error) {
@@ -92,14 +92,14 @@ export const usePokemonStore = defineStore('pokemon', () => {
   const deletePokemon = async (id: string, pokemonName: string) => {
     isLoading.value = true;
     error.value = null;
-    
+
     try {
       await api.delete(id);
       await fetchPokemons(); // Atualiza a lista após excluir
-      
+
       // Define a mensagem de sucesso
       showSuccessMessage(`Pokemon ${pokemonName} excluído com sucesso!`);
-      
+
       return { success: true };
     } catch (err) {
       if (err instanceof Error) {
@@ -119,7 +119,7 @@ export const usePokemonStore = defineStore('pokemon', () => {
   // Mostrar mensagem de sucesso com timeout
   const showSuccessMessage = (message: string) => {
     successMessage.value = message;
-    
+
     // Limpa a mensagem após 5 segundos
     setTimeout(() => {
       successMessage.value = null;
@@ -130,15 +130,15 @@ export const usePokemonStore = defineStore('pokemon', () => {
   const updatePokemon = async (id: string, name: string) => {
     isLoading.value = true;
     error.value = null;
-    
+
     try {
       const response = await api.update(id, name);
       await fetchPokemons(); // Atualiza a lista após editar
-      
+
       // Define a mensagem de sucesso
       const pokemonName = response.pokemon?.name || name;
       showSuccessMessage(`Pokemon atualizado para ${pokemonName} com sucesso!`);
-      
+
       return { success: true };
     } catch (err) {
       if (err instanceof Error) {
