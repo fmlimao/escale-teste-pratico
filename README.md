@@ -76,6 +76,15 @@ cd backend
 npm test
 ```
 
+Para executar os testes do frontend:
+
+```bash
+cd frontend
+npm test          # Executa todos os testes
+npm run test:store  # Executa apenas os testes do store Pinia
+npm run test:watch  # Executa os testes em modo de observação (watch mode)
+```
+
 Para executar os testes com cobertura:
 
 ```bash
@@ -115,11 +124,15 @@ frontend/
 │   ├── components/       # Componentes Vue
 │   ├── services/         # Serviços para comunicação com a API
 │   ├── stores/           # Stores do Pinia
+│   ├── __tests__/        # Testes unitários
+│   │   ├── components/   # Testes de componentes
+│   │   └── stores/       # Testes de stores
 │   ├── App.vue           # Componente raiz
 │   ├── main.ts           # Ponto de entrada da aplicação
 │   └── style.css         # Estilos globais
 ├── package.json          # Dependências e scripts
 ├── tsconfig.json         # Configuração do TypeScript
+├── vitest.config.ts      # Configuração do Vitest
 └── Dockerfile            # Configuração do Docker
 ```
 
@@ -189,9 +202,35 @@ A documentação completa da API está disponível em: http://localhost:3000/api
 4. **Responsividade**:
    - Layout adaptável para diferentes tamanhos de tela
 
+5. **Testes**:
+   - Testes unitários com Vitest
+   - Testes para o store Pinia (100% de cobertura)
+   - Testes para componentes Vue
+   - Mocks para serviços de API
+   - Testes de interação do usuário
+
+## Detalhes dos Testes
+
+### Backend
+
+- Testes unitários com Jest
+- 100% de cobertura de código
+- Testes para controllers, services, middlewares e models
+- Mocks para o banco de dados e serviços externos
+- Testes de integração para os endpoints da API
+
+### Frontend
+
+- Testes unitários com Vitest
+- Testes para o store Pinia com 100% de cobertura
+- Mocks para serviços de API
+- Testes de componentes com @vue/test-utils
+- Testes de interação do usuário (cliques, formulários, etc.)
+
 ## Observações
 
 - O projeto foi desenvolvido com foco em boas práticas de código, como Clean Code e SOLID
 - A arquitetura segue o padrão MVC no backend
 - O frontend utiliza componentes modulares e reutilizáveis
 - Todos os endpoints da API são documentados com Swagger
+- Implementação completa de testes unitários tanto no backend quanto no frontend
