@@ -58,7 +58,18 @@ const sendMessage = async () => {
   
   try {
     // Envia pergunta para o chatbot diretamente
-    const pokemons = pokemonStore.pokemons;
+    // Clona e otimiza os dados dos Pokémons removendo sprites para reduzir o tamanho do JSON
+    const optimizedPokemons = pokemonStore.pokemons.map(pokemon => {
+      // Desestrutura o objeto para extrair sprites e o resto dos dados
+      const { sprites, ...pokemonWithoutSprites } = pokemon;
+      
+      // Mantém apenas a URL da imagem principal do sprite para referência, se necessário
+      return {
+        ...pokemonWithoutSprites,
+        // Adiciona apenas a URL da imagem principal, se existir
+        spriteUrl: sprites?.front_default || null
+      };
+    });
     
     const response = await fetch(webhookUrl, {
       method: 'POST',
@@ -67,7 +78,7 @@ const sendMessage = async () => {
       },
       body: JSON.stringify({
         userText: userMessage,
-        pokemons
+        pokemons: optimizedPokemons
       })
     });
     
